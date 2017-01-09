@@ -1,6 +1,6 @@
 /** ------------------------------------------------ main -----------------------------------------------
  * by Urakake     **/
-
+  
 var roleDrone = require('role.drone');
 var roleSlave = require('role.slave');
 var roleMiner = require('role.miner');
@@ -12,7 +12,7 @@ module.exports.loop = function () {
     for(var i in Memory.creeps) {
         if(!Game.creeps[i]) {
             delete Memory.creeps[i];
-        }
+        } 
     }
 	var roomList = Game.rooms;   
 	// room management
