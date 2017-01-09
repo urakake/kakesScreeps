@@ -4,6 +4,7 @@
 var roleDrone = require('role.drone');
 var roleSlave = require('role.slave');
 var roleMiner = require('role.miner');
+var roleMover = require('role.mover');
 var roleScout = require('role.scout');
 var autoBuild = require('mod.autoBuild');
 
@@ -39,7 +40,9 @@ module.exports.loop = function () {
                 roleMiner.run(creep);
     		}  else if (creep.memory.role=="scout"){
                 roleScout.run(creep);
-    		} 
+    		}   else if (creep.memory.role=="mover"){
+                roleMover.run(creep);
+    		}
 		}
     }
     // spawn missing creeps
@@ -63,6 +66,8 @@ function initRoom(myRoom) {
 	myRoom.memory.sourceIter=0;
 	myRoom.memory.droneIter=0;
 	myRoom.memory.mineIter=0;
+	myRoom.memory.sourceBins=[];
+	myRoom.memory.destBins=[];
 	var respawningSources = myRoom.find(FIND_SOURCES);
 	var sourceIds=[];
 	var minerIds=[];

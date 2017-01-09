@@ -25,8 +25,9 @@ function init(creep) {
 }
 function work(creep) {
 	if(creep.memory.state == "traverse") {
-	    var targetRoom=creep.memory.targetRoom;
+	    var targetRoom=Memory.rooms[creep.memory.targetRoom];
 	    if(creep.room.name != targetRoom.name){
+	        //console.log(creep.room.name+" - "+creep.memory.targetRoom)
             voyage(creep,targetRoom);
         } else {
             //console.log("voyageDone");
@@ -42,7 +43,7 @@ function work(creep) {
 	    }
 	} else if(creep.memory.state == "claim"){
 	    //creep.memory.state = "traverse";
-		if(creep.claimController(targetRoom.controller) == ERR_NOT_IN_RANGE){
+		if(targetRoom && creep.claimController(targetRoom.controller) == ERR_NOT_IN_RANGE){
 			creep.moveTo(targetRoom.controller);
 		} 
 	} 
