@@ -13,30 +13,39 @@ var roleScout = {
 function init(creep) {
     console.log("Initializing Scout - "+creep.name);
     creep.memory.init=true;
-    creep.memory.targetRoom;
     if(creep.memory.targetRoom==undefined){
 	    creep.memory.targetRoom="none";
 	}
 	if(creep.memory.role==undefined){
 	    creep.memory.role="scout";
 	}
+	creep.memory.contX=36;
+    creep.memory.contY=18;
 	creep.memory.state="traverse"
 }
 function work(creep) {
 	if(creep.memory.state == "traverse") {
-	    var targetRoom=Game.rooms[creep.memory.targetRoom];
+	    var targetRoom=creep.memory.targetRoom;
 	    if(creep.room.name != targetRoom){
             voyage(creep,targetRoom);
         } else {
-            creep.memory.state = "claim";
+            //console.log("voyageDone");
+            creep.memory.state = "find";
         }
-	}else if(creep.memory.state == "claim"){
+	} else if(creep.memory.state == "find"){
+	    if(creep.pos.getRangeTo(creep.memory.contX,creep.memory.contY)>2){
+	        creep.moveTo(creep.memory.contX,creep.memory.contY);
+	    } else {
+	        creep.memory.state = "claim"
+	    }
+	} else if(creep.memory.state == "claim"){
 		if(creep.claimController(targetRoom.controller) == ERR_NOT_IN_RANGE){
 			creep.moveTo(targetRoom.controller);
 		} 
 	} 
 }
 function voyage(creep,destRoom) {
+    //console.log("find room")
     var exitDir = Game.map.findExit(creep.room.name, destRoom);
     var Exit = creep.pos.findClosestByPath(exitDir);
     creep.moveTo(Exit);
