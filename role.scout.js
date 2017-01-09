@@ -26,19 +26,22 @@ function init(creep) {
 function work(creep) {
 	if(creep.memory.state == "traverse") {
 	    var targetRoom=creep.memory.targetRoom;
-	    if(creep.room.name != targetRoom){
+	    if(creep.room.name != targetRoom.name){
             voyage(creep,targetRoom);
         } else {
             //console.log("voyageDone");
             creep.memory.state = "find";
+            creep.say("find")
         }
 	} else if(creep.memory.state == "find"){
 	    if(creep.pos.getRangeTo(creep.memory.contX,creep.memory.contY)>2){
 	        creep.moveTo(creep.memory.contX,creep.memory.contY);
 	    } else {
 	        creep.memory.state = "claim"
+	        creep.say("claim")
 	    }
 	} else if(creep.memory.state == "claim"){
+	    //creep.memory.state = "traverse";
 		if(creep.claimController(targetRoom.controller) == ERR_NOT_IN_RANGE){
 			creep.moveTo(targetRoom.controller);
 		} 

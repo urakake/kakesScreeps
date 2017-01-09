@@ -70,7 +70,6 @@ function dumpEnergy(creep) {
         creep.memory.targetDest="";
         creep.memory.state = "acquireEnergy";
     }
-    
     if(target){
         moveToTransfer(creep,target);
     }
@@ -82,8 +81,12 @@ function voyageOutOfRoom(creep,destRoom) {
 }
 function moveToPickup(creep,target) {
     if(target.energy<target.energyCapacity){
-        if(creep.pickup(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
+        if(creep.room.name==target.room.name){
+            if(creep.pickup(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target);
+            }
+        } else {
+            voyageOutOfRoom(creep,target.room)
         }
     } else {
         findSource(creep);
@@ -91,9 +94,14 @@ function moveToPickup(creep,target) {
 }
 function moveToTransfer(creep,target) {
     if(target.energy<target.energyCapacity){
-        if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
+        if(creep.room.name==target.room.name){
+            if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target);
+            }
+        } else {
+            voyageOutOfRoom(creep,target.room)
         }
+        
     } else {
         findDest(creep);
     }
@@ -121,8 +129,10 @@ function findDest(creep) {
                 }
             }
         } else { // closest destination bin not full
-            creep.memory.targetDest=target;
-            return target;
+            if(creep.memory.targetDest!=""){
+                creep.memory.targetDest=target;
+                return target;
+            }
         }
     }
 }
@@ -157,9 +167,10 @@ function findSource(creep) {
                 }
             }
         } else { // closest destination bin not full
-            creep.memory.targetSource=target;
-            return target;
-        }
+           if(creep.memory.targetSource!=""){
+                creep.memory.targetSource=target;
+                return target;
+            }
     }
 }
 module.exports = roleMover;
