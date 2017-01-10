@@ -27,8 +27,10 @@ function work(creep) {
         makeBox(creep);
     } else if (creep.memory.state=="buildBox"){
         buildBox(creep);
-    } else if (creep.memory.state=="mine"){
-        mine(creep);
+    } else if (creep.memory.state=="acquireEnergy"){
+        acquireEnergy(creep);
+    } else if (creep.memory.state=="dumpEnergy"){
+        dumpEnergy(creep);
     }
 }
 function moveToNode(creep){
@@ -64,7 +66,7 @@ function findStorage(creep){
         if (creep.pos.inRangeTo(closestBox, 7)){
             creep.memory.storeBox=closestBox.id;
             foundStorage=true;
-            creep.memory.state = "mine";
+            creep.memory.state = "acquireEnergy";
         }
     }
     if(!foundStorage){
@@ -113,21 +115,27 @@ function buildBox(creep){
         creep.memory.state = "find";
     }
 }
-function mine(creep){
+function acquireEnergy(creep){
+    //creep.memory.state="acquireEnergy"
     var targetSource=Game.getObjectById(creep.memory.assignedNode);
+    if(creep.harvest(targetSource) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(targetSource);
+    }
+    if(creep.carry.energy==creep.carryCapacity){
+        creep.memory.state="dumpEnergy"
+    }
+}
+function dumpEnergy(creep) {
     var storeBox=Game.getObjectById(creep.memory.storeBox);
-    if(creep.carry.energy >= creep.carryCapacity){
-        if(storeBox.hits < storeBox.hitsMax){
-            creep.repair(storeBox);
-        } else {
-            if(creep.transfer(storeBox, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(storeBox);
-            }
-        }
+    if(storeBox.hits < storeBox.hitsMax){
+        creep.repair(storeBox);
     } else {
-         if(creep.harvest(targetSource) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(targetSource);
+        if(creep.transfer(storeBox, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(storeBox);
         }
+    }
+    if(creep.carry.energy==0){
+        creep.memory.state="acquireEnergy"
     }
 }
 
