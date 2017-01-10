@@ -53,7 +53,7 @@ module.exports.loop = function () {
 				thisSpawn=Game.spawns[j];
 			}
 		}
-        if (thisSpawn && thisSpawn.structureType==STRUCTURE_SPAWN && thisSpawn && !thisSpawn.spawning){
+        if (thisSpawn && thisSpawn.structureType==STRUCTURE_SPAWN && !thisSpawn.spawning){
             spawnNextUnit(thisSpawn);
 		}
 	}

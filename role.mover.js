@@ -175,8 +175,7 @@ function findSource(creep) {
         if(sourceBin){
             sourceBins.push(sourceBin);
         }
-    }
-    //find dropped energy
+    }                                                   //find dropped energy
     creep.memory.pickupFlag=false;
     var targets = creep.room.find(FIND_DROPPED_ENERGY, {
         filter: (structure) => { 
@@ -184,28 +183,23 @@ function findSource(creep) {
         }
     });
     if(targets.length){
-        
         var target = creep.pos.findClosestByRange(targets);
         creep.memory.targetSource=target.id;
         creep.memory.pickupFlag=true;
         return target;
-    } else {     // find source bin  
-    
+    } else {                                            // find source bin  
         var target = creep.pos.findClosestByRange(sourceBins);
         if (target==null){
             console.log("no sources")
-        } else if(target.store[RESOURCE_ENERGY]==0){
-            for (var i in creep.room.memory.sourceBins){
+        } else if(target.store[RESOURCE_ENERGY]==target.storeCapacity){ // closest bin full 
+            for (var i in creep.room.memory.sourceBins){                //find any empty bin
                 target = Game.getObjectById(creep.room.memory.sourceBins[i]);
-                if (target){
-                    if  ((target.energy>0)||(target.store>0)){
+                if (target && target.store[RESOURCE_ENERGY]>0){ 
                     creep.memory.targetDest=target.id;
                     return target
-                    }
                 }
             }
         } else { // closest destination bin not full
-            //console.log(target.id)
             creep.memory.targetSource=target.id;
             return target;
         }
