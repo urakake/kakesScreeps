@@ -99,7 +99,7 @@ function moveToPickup(creep,target) {
     }
 }
 function moveToGetTransfer(creep,target) {
-    if(target.store[RESOURCE_ENERGY]<target.storeCapacity){
+    if(target.store[RESOURCE_ENERGY]>0){
         if(creep.room.name==target.room.name){
             if(target.transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target);

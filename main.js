@@ -1,4 +1,10 @@
 /** ------------------------------------------------ main -----------------------------------------------
+ *  Game.spawns['Spawn1'].createCreep( [WORK,MOVE,CARRY,CLAIM], "creepName", { role: 'scout', targetRoom: 'W7N3' } );
+    Game.spawns['Spawn1'].createCreep( [WORK,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY], "moverTest", { role: 'mover' } )
+    Game.spawns['Spawn1'].createCreep( [WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,CARRY,CARRY], "miner1", { role: 'miner', assignedNode: '9263077296e02bb' } );
+
+ * 
+ * 
  * by Urakake     **/
   
 var roleDrone = require('role.drone');
