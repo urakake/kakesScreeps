@@ -193,6 +193,19 @@ function findDest(creep) {
         }
     }
 }
+function makeParts(moves, carries, works) {
+    var list = [];
+    for(var i=0;i<moves;i++){
+        list.push(MOVE);
+    }
+    for(var i=0;i<carries;i++){
+        list.push(CARRY);
+    }
+    for(var i=0;i<works;i++){
+        list.push(WORK);
+    }
+    return list;
+}
 
 
 

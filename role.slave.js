@@ -8,6 +8,29 @@ var roleSlave = {
             init(creep);
         }
         work(creep);
+	},
+	makeSlave: function(spawn){
+	    var cap = spawn.room.energyAvailable;
+        var creepName="controllerSlave@"+spawn.room.name;
+        console.log("Creating Creep ("+creepName+")");
+        if(cap<300){   // under 300
+            spawn.createCreep( makeParts(1,1,1), creepName, { role: 'slave' } );
+        } else if(cap<550){   // 300-549
+            spawn.createCreep( makeParts(2,2,1), creepName, { role: 'slave' } );
+        } else if(cap<800){   // 550-799
+            spawn.createCreep( makeParts(3,4,2), creepName, { role: 'slave' } );
+        } else if(cap<1300){   // 800-1299
+            spawn.createCreep( makeParts(4,6,3), creepName, { role: 'slave' } );
+        } else if(cap<1800){   // 1300-1799
+            spawn.createCreep( makeParts(8,10,4), creepName, { role: 'slave' } );
+        } else if(cap<2300){   // 1800-2299
+            spawn.createCreep( makeParts(8,10,4), creepName, { role: 'slave' } );
+        } else {   // 2300+
+            spawn.createCreep( makeParts(8,10,5), creepName, { role: 'slave' } );
+        }
+	},
+	checkSlave: function(spawn){
+	    var myRoom=spawn.room
 	}
 };
 function init(creep) {
@@ -73,6 +96,19 @@ function dump(creep) {
     if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
     }
+}
+function makeParts(moves, carries, works) {
+    var list = [];
+    for(var i=0;i<moves;i++){
+        list.push(MOVE);
+    }
+    for(var i=0;i<carries;i++){
+        list.push(CARRY);
+    }
+    for(var i=0;i<works;i++){
+        list.push(WORK);
+    }
+    return list;
 }
 
 

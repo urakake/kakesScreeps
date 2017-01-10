@@ -8,6 +8,37 @@ var roleDrone = {
             init(creep);
         }
         work(creep);
+	},
+	makeDrone: function(spawn){
+	    var cap = spawn.room.energyAvailable;
+        var creepName="drone"+spawn.room.memory.creepIter+"@"+spawn.room.name;
+        console.log("Creating Creep ("+creepName+")");
+        spawn.room.memory.creepIter++;
+        if(cap<300){   // under 300
+            spawn.createCreep( makeParts(1,1,1), creepName, { role: 'drone' } );
+        } else if(cap<400){   // 300-300
+            spawn.createCreep( makeParts(2,2,1), creepName, { role: 'drone' } );
+        } else if(cap<550){   // 400-549
+            spawn.createCreep( makeParts(2,2,2), creepName, { role: 'drone' } );
+        } else if(cap<800){   // 550-799
+            spawn.createCreep( makeParts(3,4,2), creepName, { role: 'drone' } );
+        } else if(cap<1300){   // 800-1299
+            spawn.createCreep( makeParts(4,6,3), creepName, { role: 'drone' } );
+        } else if(cap<1800){   // 1300-1799
+            spawn.createCreep( makeParts(6,8,4), creepName, { role: 'drone' } );
+        } else if(cap<2300){   // 1800-2299
+            spawn.createCreep( makeParts(8,10,4), creepName, { role: 'drone' } );
+        } else {   // 2300+
+            spawn.createCreep( makeParts(8,10,5), creepName, { role: 'drone' } );
+        }
+	},
+	checkDrones: function(spawn){
+	    var myRoom=spawn.room;
+	    var foundMissing=false;
+        if (myRoom.memory.numOfDrones<=((myRoom.memory.sourceNum)*3)-1){
+            var foundMissing=true;
+        }
+        return foundMissing;
 	}
 };
 function init(creep) {
@@ -136,4 +167,18 @@ function dump(creep) {
             creep.moveTo(target);
     }
 }
+function makeParts(moves, carries, works) {
+    var list = [];
+    for(var i=0;i<moves;i++){
+        list.push(MOVE);
+    }
+    for(var i=0;i<carries;i++){
+        list.push(CARRY);
+    }
+    for(var i=0;i<works;i++){
+        list.push(WORK);
+    }
+    return list;
+}
+
 module.exports = roleDrone;

@@ -8,17 +8,51 @@ var roleMover = {
             init(creep);
         }
         work(creep);
+	},
+	makeMover: function(spawn) {
+	    var cap = spawn.room.energyAvailable;
+        var missingBin;
+        for(var i in myRoom.memory.moverIds){
+            var thisId=myRoom.memory.moverIds[i];
+            if(thisId==undefined || Game.getObjectById(thisId)==undefined){
+                missingBin=myRoom.memory.sourceBins[i];
+            }
+        }
+        var creepName="mover"+spawn.room.memory.creepIter+"@"+spawn.room.name;
+        console.log("Creating Creep ("+creepName+")");
+        spawn.room.memory.creepIter++;
+        if(cap<300){ // under 300
+            spawn.createCreep( makeParts(1,1,1), creepName, { role: 'miner', sourceBin: missingBin } );
+        } else if(cap<400){   // 300-399
+            spawn.createCreep( makeParts(1,1,2), creepName, { role: 'miner', sourceBin: missingBin } );
+        } else if(cap<550){   // 400-549
+           spawn.createCreep( makeParts(2,2,3), creepName, { role: 'miner', sourceBin: missingBin } );
+        } else if(cap<800){   // 550-799
+            spawn.createCreep( makeParts(2,2,4), creepName, { role: 'miner', sourceBin: missingBin } );
+        } else if(cap<1300){   // 800-1299
+            spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', sourceBin: missingBin } );
+        } else if(cap<1800){   // 1300-1799
+            spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', sourceBin: missingBin } );
+        } else if(cap<2300){   // 1800-2299
+            spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', sourceBin: missingBin } );  
+        } else {   // 2300+
+            spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', sourceBin: missingBin } );
+        }
+	},
+	checkMovers: function(spawn) {
+	    myRoom=spawn.room;
+    	var foundMissing=false;
+        for(var i in myRoom.memory.moverIds){
+            var thisId=myRoom.memory.moverIds[i];
+            if(thisId==undefined || Game.getObjectById(thisId)==undefined){
+                myRoom.memory.moverIds[i]=undefined;
+                foundMissing=true;
+            }
+        }
+        return foundMissing;
 	}
 };
-function init(creep) {
-    console.log("Initializing Mover - "+creep.name);
-    creep.memory.init=true;
-	//creep.memory.sourceBin==undefined;
-	//creep.memory.destBin=undefined;
-	creep.memory.targetSource=undefined;
-    creep.memory.targetDest=undefined;
-	creep.memory.state = "acquireEnergy";
-}
+
 function work(creep) {
     if(creep.memory.state == "acquireEnergy"){
 		acquireEnergy(creep);
@@ -221,5 +255,27 @@ function containerAtCap(structure){
         }
     } 
     return atCap;
+}
+function init(creep) {
+    console.log("Initializing Mover - "+creep.name);
+    creep.memory.init=true;
+	//creep.memory.sourceBin==undefined;
+	//creep.memory.destBin=undefined;
+	creep.memory.targetSource=undefined;
+    creep.memory.targetDest=undefined;
+	creep.memory.state = "acquireEnergy";
+}
+function makeParts(moves, carries, works) {
+    var list = [];
+    for(var i=0;i<moves;i++){
+        list.push(MOVE);
+    }
+    for(var i=0;i<carries;i++){
+        list.push(CARRY);
+    }
+    for(var i=0;i<works;i++){
+        list.push(WORK);
+    }
+    return list;
 }
 module.exports = roleMover;
