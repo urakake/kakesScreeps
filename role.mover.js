@@ -185,21 +185,23 @@ function findDest(creep) {
         return target;
         
     } else {     //   find a destination bin
-    
-        var target = creep.pos.findClosestByRange(destBins);
-        if (target.store[RESOURCE_ENERGY]==target.storeCapacity[RESOURCE_ENERGY]){
-            
-            for (var i in creep.room.memory.destBins){
-                target = Game.getObjectById(creep.room.memory.destBins[i]);
-                if ((target.energy<target.energyCapacity)||(target.store<target.storeCapacity)){
-                    creep.memory.targetDest=target.id;
-                    return target;
+        if (destBins.length>0){
+            var target = creep.pos.findClosestByRange(destBins);
+            console.log(target)
+            if (target.store[RESOURCE_ENERGY]==target.storeCapacity){   //  closest bin full find non empty
+                for (var i in creep.room.memory.destBins){
+                    target = Game.getObjectById(creep.room.memory.destBins[i]);
+                    if ((target.energy<target.energyCapacity)||(target.store<target.storeCapacity)){
+                        creep.memory.targetDest=target.id;
+                        return target;
+                    }
                 }
+            } else { // closest destination bin not full
+                creep.memory.targetDest=target.id;
+                return target;
             }
-        } else { // closest destination bin not full
-            creep.memory.targetDest=target.id;
-            return target;
         }
+        
     }
 }
 function findSource(creep) { 
@@ -224,7 +226,7 @@ function findSource(creep) {
     } else {                                            // find source bin  
         var target = creep.pos.findClosestByRange(sourceBins);
         if (target==null){
-            console.log("no sources")
+            creep.say("no sources");
         } else if(target.store[RESOURCE_ENERGY]==target.storeCapacity){ // closest bin full 
             for (var i in creep.room.memory.sourceBins){                //find any empty bin
                 target = Game.getObjectById(creep.room.memory.sourceBins[i]);

@@ -8,7 +8,7 @@ var roleSlave = {
             init(creep);
         }
         work(creep);
-	},
+	}, 
 	makeSlave: function(spawn){
 	    var cap = spawn.room.energyAvailable;
         var creepName="controllerSlave@"+spawn.room.name;
@@ -22,11 +22,11 @@ var roleSlave = {
         } else if(cap<1300){   // 800-1299
             spawn.createCreep( makeParts(4,6,3), creepName, { role: 'slave' } );
         } else if(cap<1800){   // 1300-1799
-            spawn.createCreep( makeParts(8,10,4), creepName, { role: 'slave' } );
+            spawn.createCreep( makeParts(4,6,3), creepName, { role: 'slave' } );
         } else if(cap<2300){   // 1800-2299
-            spawn.createCreep( makeParts(8,10,4), creepName, { role: 'slave' } );
+            spawn.createCreep( makeParts(4,6,3), creepName, { role: 'slave' } );
         } else {   // 2300+
-            spawn.createCreep( makeParts(8,10,5), creepName, { role: 'slave' } );
+            spawn.createCreep( makeParts(4,6,3), creepName, { role: 'slave' } );
         }
 	},
 	checkSlave: function(spawn){

@@ -31,10 +31,21 @@ module.exports.loop = function () {
 		myRoom.memory.numDrones=0;
 	    myRoom.memory.numSlaves=0;
 	    myRoom.memory.numMiners=0;
-	    myRoom.memory.numMover=0;
+	    myRoom.memory.numMovers=0;
 	    myRoom.memory.numScouts=0;
 		//autoBuild.run(roomList[i]);
-		
+	    if(myRoom.memory.scoutRoom!=undefined){
+	        
+	    }
+	    if(myRoom.memory.newSourceId!=undefined){
+	        myRoom.memory.sourceIds.push(myRoom.memory.newSourceId);
+	        myRoom.memory.minerNames.push("")
+	    }
+	    if(myRoom.memory.newSourceBin!=undefined){
+	        myRoom.memory.sourceBins.push(myRoom.memory.newSourceBin);
+	        myRoom.memory.moverNames.push("")
+	    }
+	    
 		workTowers(roomList[i]);
 	}
 	// run thru creeps
@@ -52,7 +63,7 @@ module.exports.loop = function () {
 			}
 		}
         if (thisSpawn && thisSpawn.structureType==STRUCTURE_SPAWN && !thisSpawn.spawning){
-            spawnNextUnit(thisSpawn);
+            //spawnNextUnit(thisSpawn);
             //spawnNextUnit2(thisSpawn);
 		}
 	}
@@ -91,17 +102,17 @@ function spawnNextUnit2(spawn) {
     if(!spawn.spawning && spawn.room.energyAvailable>=200){
         if(spawn.room.memory.numMiners<1){
             console.log("spawning only miner")
-            //roleMiner.makeMiner(spawn);
+            roleMiner.makeMiner(spawn);
         } else if(spawn.room.memory.numMovers<1){
             console.log("spawning only mover")
-            //roleMover.makeMover(spawn);
+            roleMover.makeMover(spawn);
         } else if (spawn.room.memory.numSlaves<1){
             console.log("spawning only slave")
-            //roleSlave.makeSlave(spawn);
-        } else {                //  1 of each
+            roleSlave.makeSlave(spawn);
+        } else if(spawn.room.energyAvailable==spawn.room.energyCapacityAvailable) {       //  1 of each + full
             if(roleMiner.checkMiners(spawn)){
                 console.log("spawning additional miner")
-                //roleMiner.makeMiner(spawn);
+                roleMiner.makeMiner(spawn);
             } else if (roleMover.checkMovers(spawn)){
                 console.log("spawning additional mover")
                 //roleMover.makeMover(spawn)
