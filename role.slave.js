@@ -11,8 +11,9 @@ var roleSlave = {
 	}, 
 	makeSlave: function(spawn){
 	    var cap = spawn.room.energyAvailable;
-        var creepName="controllerSlave@"+spawn.room.name;
+        var creepName="controllerSlave"+spawn.room.memory.creepIter+"@"+spawn.room.name;
         console.log("Creating Creep ("+creepName+")");
+        spawn.room.memory.creepIter++
         if(cap<300){   // under 300
             spawn.createCreep( makeParts(1,1,1), creepName, { role: 'slave' } );
         } else if(cap<550){   // 300-549
@@ -20,19 +21,19 @@ var roleSlave = {
         } else if(cap<800){   // 550-799
             spawn.createCreep( makeParts(2,4,2), creepName, { role: 'slave' } );
         } else if(cap<1300){   // 800-1299
-            spawn.createCreep( makeParts(2,4,3), creepName, { role: 'slave' } );
+            spawn.createCreep( makeParts(4,4,4), creepName, { role: 'slave' } );
         } else if(cap<1800){   // 1300-1799
-            spawn.createCreep( makeParts(3,4,4), creepName, { role: 'slave' } );
+            spawn.createCreep( makeParts(4,4,8), creepName, { role: 'slave' } );
         } else if(cap<2300){   // 1800-2299
-            spawn.createCreep( makeParts(4,4,5), creepName, { role: 'slave' } );
+            spawn.createCreep( makeParts(4,4,10), creepName, { role: 'slave' } );
         } else {   // 2300+
-            spawn.createCreep( makeParts(4,4,3), creepName, { role: 'slave' } );
+            spawn.createCreep( makeParts(4,4,10), creepName, { role: 'slave' } );
         }
 	},
 	checkSlaves: function(spawn){
 	    var myRoom=spawn.room
 	    var foundMissing=false;
-	    if(myRoom.memory.numSlaves<1){
+	    if(myRoom.memory.numSlaves<2){
 	        foundMissing=true;
 	    }
 	    return foundMissing;

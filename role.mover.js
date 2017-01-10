@@ -27,7 +27,7 @@ var roleMover = {
         } else if(cap<400){   // 300-399
             spawn.createCreep( makeParts(2,2,1), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<550){   // 400-549
-           spawn.createCreep( makeParts(3,3,1), creepName, { role: 'mover', sourceBin: missingBin } );
+            spawn.createCreep( makeParts(3,3,1), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<800){   // 550-799
             spawn.createCreep( makeParts(4,5,1), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<1300){   // 800-1299
@@ -49,6 +49,9 @@ var roleMover = {
                 myRoom.memory.moverIds[i]=undefined;
                 foundMissing=true;
             }
+        }
+        if(myRoom.memory.numMovers<3){
+            foundMissing=true;
         }
         return foundMissing;
 	}

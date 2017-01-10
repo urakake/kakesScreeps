@@ -28,23 +28,23 @@ var roleMiner = {
         
         console.log("Creating Creep ("+creepName+")");
         spawn.room.memory.creepIter++;
-        /*
+        //*
         if(cap<300){ // under 300
             return spawn.createCreep( makeParts(1,1,1), creepName, { role: 'miner', assignedNode: missingNode } );
         } else if(cap<400){   // 300-399
             return spawn.createCreep( makeParts(1,1,2), creepName, { role: 'miner', assignedNode: missingNode } );
         } else if(cap<550){   // 400-549
-            return spawn.createCreep( makeParts(2,2,3), creepName, { role: 'miner', assignedNode: missingNode } );
+            return spawn.createCreep( makeParts(2,2,2), creepName, { role: 'miner', assignedNode: missingNode } );
         } else if(cap<800){   // 550-799
-            return spawn.createCreep( makeParts(2,2,4), creepName, { role: 'miner', assignedNode: missingNode } );
+            return spawn.createCreep( makeParts(2,2,3), creepName, { role: 'miner', assignedNode: missingNode } );
         } else if(cap<1300){   // 800-1299
-            return spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', assignedNode: missingNode } );
+            return spawn.createCreep( makeParts(4,4,4), creepName, { role: 'miner', assignedNode: missingNode } );
         } else if(cap<1800){   // 1300-1799
-            return spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', assignedNode: missingNode } );
+            return spawn.createCreep( makeParts(4,4,6), creepName, { role: 'miner', assignedNode: missingNode } );
         } else if(cap<2300){   // 1800-2299
-            return spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', assignedNode: missingNode } );  
+            return spawn.createCreep( makeParts(4,4,8), creepName, { role: 'miner', assignedNode: missingNode } );  
         } else {   // 2300+
-            return spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', assignedNode: missingNode } );
+            return spawn.createCreep( makeParts(4,4,8), creepName, { role: 'miner', assignedNode: missingNode } );
         } 
         //*/
         

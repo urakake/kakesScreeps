@@ -41,21 +41,7 @@ var roleDrone = {
         return foundMissing;
 	}
 };
-function init(creep) {
-    console.log("Initializing Drone - "+creep.name);
-    creep.memory.init=true;
-	if(creep.memory.assignedNode==undefined){
-	    var sources = creep.room.find(FIND_SOURCES);
-    	creep.memory.assignedNode=sources[creep.room.memory.sourceIter].id;
-    	creep.room.memory.sourceIter++;
-    	if (creep.room.memory.sourceIter==creep.room.memory.sourceNum){
-    		creep.room.memory.sourceIter=0;
-	    }
-	}
-	if(creep.memory.role==undefined){
-	    creep.memory.role="drone";
-	}
-}
+
 function work(creep) {
     // check if energy is empty
 	if(creep.carry.energy == 0 && creep.memory.state != "gather") {
@@ -167,6 +153,11 @@ function dump(creep) {
             creep.moveTo(target);
     }
 }
+function claim(creep) {
+    if(creep.claimController(creep.room.controller)==ERR_NOT_IN_RANGE){
+        creep.moveTo(creep.room.controller);
+    }
+}
 function makeParts(moves, carries, works) {
     var list = [];
     for(var i=0;i<moves;i++){
@@ -180,5 +171,18 @@ function makeParts(moves, carries, works) {
     }
     return list;
 }
-
+function init(creep) {
+    console.log("Initializing Drone - "+creep.name);
+    creep.memory.init=true;
+    creep.memory.role="drone";
+    creep.memory.state="gather"
+	if(creep.memory.assignedNode==undefined){
+	    var sources = creep.room.find(FIND_SOURCES);
+    	creep.memory.assignedNode=sources[creep.room.memory.sourceIter].id;
+    	creep.room.memory.sourceIter++;
+    	if (creep.room.memory.sourceIter==creep.room.memory.sourceNum){
+    		creep.room.memory.sourceIter=0;
+	    }
+	}
+}
 module.exports = roleDrone;

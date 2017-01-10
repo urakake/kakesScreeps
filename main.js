@@ -88,28 +88,43 @@ function processCreep(creep){
 }
 function spawnNextUnit(spawn) {
     if(!spawn.spawning && spawn.room.energyAvailable>=200){
-        if(spawn.room.memory.numMiners<1){
-            //console.log("spawning only miner")
-            roleMiner.makeMiner(spawn);
-        } else if(spawn.room.memory.numMovers<2){
-            //console.log("spawning only 2 mover")
-            roleMover.makeMover(spawn);
-        } else if (spawn.room.memory.numSlaves<1){
-            //console.log("spawning only slave")
-            roleSlave.makeSlave(spawn);
-        } else if(spawn.room.energyAvailable==spawn.room.energyCapacityAvailable) {       //  1 of each + full
-            //console.log("room full")
-            if(roleMiner.checkMiners(spawn)){
-                console.log("spawning additional miner")
+        if(spawn.room.controller.level>=3){
+            if(spawn.room.memory.numMiners<1){
+                console.log("spawning only miner in "+spawn.room)
                 roleMiner.makeMiner(spawn);
-            } else if (roleMover.checkMovers(spawn)){
-                console.log("spawning additional mover")
-                roleMover.makeMover(spawn)
-            }else if (roleSlave.checkSlaves(spawn)){
-                console.log("spawning other slaves")
-                //roleSlave.makeSlave(spawn)
+            } else if(spawn.room.memory.numMovers<2){
+                console.log("spawning mover no. "+spawn.room.memory.numMovers+" in "+spawn.room)
+                roleMover.makeMover(spawn);
+            } else if (spawn.room.memory.numSlaves<1){
+                console.log("spawning only slave in "+spawn.room)
+                roleSlave.makeSlave(spawn);
+            } else if(spawn.room.energyAvailable==spawn.room.energyCapacityAvailable) {       //  1 of each + full
+                //console.log("room full")
+                if(roleMiner.checkMiners(spawn)){
+                    console.log("spawning miner no. "+spawn.room.memory.numMiners+" in "+spawn.room)
+                    roleMiner.makeMiner(spawn);
+                } else if (roleMover.checkMovers(spawn)){
+                    console.log("spawning mover no. "+spawn.room.memory.numMovers+" in "+spawn.room)
+                    roleMover.makeMover(spawn)
+                }else if (roleSlave.checkSlaves(spawn)){
+                    console.log("spawning slave no. "+spawn.room.memory.numSlaves+" in "+spawn.room)
+                    roleSlave.makeSlave(spawn)
+                } else if (roleScout.checkScouts(spawn)){
+                    console.log("spawning scout in "+spawn.room+" in "+spawn.room)
+                    roleScout.makeScout(spawn)
+                }
             }
+        } else if (spawn.room.memory.numDrone<1){
+            console.log("spawning only slave in "+spawn.room)
+            roleDrone.makeDrone(spawn);
+        } else if (spawn.room.memory.numSlaves<1){
+            console.log("spawning only slave in "+spawn.room)
+            roleSlave.makeSlave(spawn);
+        } else if(roleDrone.checkDrones(spawn)){
+            console.log("spawning drone in "+spawn.room)
+            roleDrone.makeDrone(spawn)
         }
+        
     }
 }
 function workTowers(myRoom) {
