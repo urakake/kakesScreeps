@@ -34,6 +34,7 @@ module.exports.loop = function () {
 	    myRoom.memory.numMover=0;
 	    myRoom.memory.numScouts=0;
 		//autoBuild.run(roomList[i]);
+		
 		workTowers(roomList[i]);
 	}
 	// run thru creeps
@@ -52,6 +53,7 @@ module.exports.loop = function () {
 		}
         if (thisSpawn && thisSpawn.structureType==STRUCTURE_SPAWN && !thisSpawn.spawning){
             spawnNextUnit(thisSpawn);
+            //spawnNextUnit2(thisSpawn);
 		}
 	}
 	
@@ -80,19 +82,33 @@ function spawnNextUnit(spawn) {
     } else if(spawn.room.energyAvailable>=300 && spawn.room.memory.numSlaves<1){
             roleSlave.makeSlave(spawn);
     } else if(spawn.room.energyAvailable==spawn.room.energyCapacityAvailable){
-        if (roleDrone.checkDrones(spawn.room)){
+        if (spawn.room.memory.numDrones<5){
             roleDrone.makeDrone(spawn);
         }
     } 
 }
 function spawnNextUnit2(spawn) {
     if(!spawn.spawning && spawn.room.energyAvailable>=200){
-        if(roleMiner.checkMiners(spawn)){
-            roleMiner.makeMiner(spawn);
-        } else if (roleMover.checkMovers(spawn)){
-            roleMover.makeMover(spawn)
-        }else if (roleSlave.checkMovers(spawn)){
-            roleMover.makeMover(spawn)
+        if(spawn.room.memory.numMiners<1){
+            console.log("spawning only miner")
+            //roleMiner.makeMiner(spawn);
+        } else if(spawn.room.memory.numMovers<1){
+            console.log("spawning only mover")
+            //roleMover.makeMover(spawn);
+        } else if (spawn.room.memory.numSlaves<1){
+            console.log("spawning only slave")
+            //roleSlave.makeSlave(spawn);
+        } else {                //  1 of each
+            if(roleMiner.checkMiners(spawn)){
+                console.log("spawning additional miner")
+                //roleMiner.makeMiner(spawn);
+            } else if (roleMover.checkMovers(spawn)){
+                console.log("spawning additional mover")
+                //roleMover.makeMover(spawn)
+            }else if (roleSlave.checkSlaves(spawn)){
+                console.log("spawning other slaves")
+                //roleSlave.makeSlave(spawn)
+            }
         }
     }
 }
@@ -130,12 +146,12 @@ function initRoom(myRoom) {
 	myRoom.memory.numDrones=0;
 	myRoom.memory.numSlaves=0;
 	myRoom.memory.numMiners=0;
-	myRoom.memory.numMover=0;
+	myRoom.memory.numMovers=0;
 	myRoom.memory.numScouts=0;
 	var respawningSources = myRoom.find(FIND_SOURCES);
 	var sourceIds=[];
 	var minerNames=[];
-	console.log(respawningSources.length);
+	console.log(respawningSources.length+" sources found");
 	for (var j in respawningSources){
 	    sourceIds.push(respawningSources[j].id);
 	    minerNames.push("");

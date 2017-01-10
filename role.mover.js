@@ -10,6 +10,7 @@ var roleMover = {
         work(creep);
 	},
 	makeMover: function(spawn) {
+	    var myRoom=spawn.room;
 	    var cap = spawn.room.energyAvailable;
         var missingBin;
         for(var i in myRoom.memory.moverIds){
@@ -22,21 +23,21 @@ var roleMover = {
         console.log("Creating Creep ("+creepName+")");
         spawn.room.memory.creepIter++;
         if(cap<300){ // under 300
-            spawn.createCreep( makeParts(1,1,1), creepName, { role: 'miner', sourceBin: missingBin } );
+            spawn.createCreep( makeParts(1,1,1), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<400){   // 300-399
-            spawn.createCreep( makeParts(1,1,2), creepName, { role: 'miner', sourceBin: missingBin } );
+            spawn.createCreep( makeParts(2,2,1), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<550){   // 400-549
-           spawn.createCreep( makeParts(2,2,3), creepName, { role: 'miner', sourceBin: missingBin } );
+           spawn.createCreep( makeParts(3,3,1), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<800){   // 550-799
-            spawn.createCreep( makeParts(2,2,4), creepName, { role: 'miner', sourceBin: missingBin } );
+            spawn.createCreep( makeParts(4,5,1), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<1300){   // 800-1299
-            spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', sourceBin: missingBin } );
+            spawn.createCreep( makeParts(6,8,1), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<1800){   // 1300-1799
-            spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', sourceBin: missingBin } );
+            spawn.createCreep( makeParts(8,10,1), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<2300){   // 1800-2299
-            spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', sourceBin: missingBin } );  
+            spawn.createCreep( makeParts(8,10,1), creepName, { role: 'mover', sourceBin: missingBin } );  
         } else {   // 2300+
-            spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', sourceBin: missingBin } );
+            spawn.createCreep( makeParts(8,10,1), creepName, { role: 'mover', sourceBin: missingBin } );
         }
 	},
 	checkMovers: function(spawn) {
@@ -52,7 +53,6 @@ var roleMover = {
         return foundMissing;
 	}
 };
-
 function work(creep) {
     if(creep.memory.state == "acquireEnergy"){
 		acquireEnergy(creep);

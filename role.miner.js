@@ -18,9 +18,11 @@ var roleMiner = {
                 missingNum=i;
             }
         }
+        console.log(spawn.room.memory.minerIds[missingNum]);
         var creepName="miner"+spawn.room.memory.creepIter+"@"+spawn.room.name;
         var missingNode=spawn.room.memory.sourceIds[missingNum];
-        spawn.room.memory.minerNames[missingNum]=creepName;
+        
+        spawn.room.memory.minerIds[missingNum]=creepName;
         console.log("Creating Creep ("+creepName+")");
         spawn.room.memory.creepIter++;
         if(cap<300){ // under 300
@@ -41,7 +43,7 @@ var roleMiner = {
             spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', assignedNode: missingNode } );
         }
     },
-    checkMiner: function(spawn){                //returns true if missing
+    checkMiners: function(spawn){                //returns true if missing
         var myRoom=spawn.room;
         var foundMissing=false;
         var missingNum=-1;

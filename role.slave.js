@@ -31,6 +31,11 @@ var roleSlave = {
 	},
 	checkSlave: function(spawn){
 	    var myRoom=spawn.room
+	    var foundMissing=false;
+	    if(myRoom.memory.numSlaves<1){
+	        foundMissing=true;
+	    }
+	    return foundMissing;
 	}
 };
 function init(creep) {

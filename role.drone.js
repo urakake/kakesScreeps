@@ -35,7 +35,7 @@ var roleDrone = {
 	checkDrones: function(spawn){
 	    var myRoom=spawn.room;
 	    var foundMissing=false;
-        if (myRoom.memory.numOfDrones<=((myRoom.memory.sourceNum)*3)-1){
+        if (myRoom.memory.numDrones<=((myRoom.memory.sourceNum)*3)-1){
             var foundMissing=true;
         }
         return foundMissing;
