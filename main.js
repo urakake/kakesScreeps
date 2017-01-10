@@ -25,9 +25,29 @@ module.exports.loop = function () {
 	// room management
 	for(var i in roomList){
 	    var myRoom=roomList[i];
-		if (!roomList[i].memory.init){
-			initRoom(roomList[i]);
+		processRoom(myRoom)
+	}
+	// run thru creeps
+    for(var i in Game.creeps) {
+        if (Game.creeps[i].my) {
+            processCreep(Game.creeps[i]);
 		}
+    }
+    // spawn missing creeps
+    for(var i in roomList){
+		var thisSpawn; 
+		for(var j in Game.spawns) {
+			if (Game.spawns[j].room==roomList[i]){
+				thisSpawn=Game.spawns[j];
+			}
+		}
+        if (thisSpawn && thisSpawn.structureType==STRUCTURE_SPAWN && !thisSpawn.spawning){
+        spawnNextUnit(thisSpawn);
+		}
+	}
+}
+function processRoom(myRoom){
+        if (!myRoom.memory.init){   initRoom(myRoom);  }
 		myRoom.memory.numDrones=0;
 	    myRoom.memory.numSlaves=0;
 	    myRoom.memory.numMiners=0;
@@ -46,28 +66,7 @@ module.exports.loop = function () {
 	        myRoom.memory.moverNames.push("")
 	    }
 	    
-		workTowers(roomList[i]);
-	}
-	// run thru creeps
-    for(var i in Game.creeps) {
-        if (Game.creeps[i].my) {
-            processCreep(Game.creeps[i]);
-		}
-    }
-    // spawn missing creeps
-    for(var i in roomList){
-		var thisSpawn; 
-		for(var j in Game.spawns) {
-			if (Game.spawns[j].room==roomList[i]){
-				thisSpawn=Game.spawns[j];
-			}
-		}
-        if (thisSpawn && thisSpawn.structureType==STRUCTURE_SPAWN && !thisSpawn.spawning){
-            //spawnNextUnit(thisSpawn);
-            //spawnNextUnit2(thisSpawn);
-		}
-	}
-	
+		workTowers(myRoom);
 }
 function processCreep(creep){
     if (creep.memory.role=="drone"){ 
@@ -88,34 +87,24 @@ function processCreep(creep){
 	}
 }
 function spawnNextUnit(spawn) {
-    if(spawn.room.energyAvailable>=200 && spawn.room.memory.numDrones<1){
-        roleDrone.makeDrone(spawn);
-    } else if(spawn.room.energyAvailable>=300 && spawn.room.memory.numSlaves<1){
-            roleSlave.makeSlave(spawn);
-    } else if(spawn.room.energyAvailable==spawn.room.energyCapacityAvailable){
-        if (spawn.room.memory.numDrones<5){
-            roleDrone.makeDrone(spawn);
-        }
-    } 
-}
-function spawnNextUnit2(spawn) {
     if(!spawn.spawning && spawn.room.energyAvailable>=200){
         if(spawn.room.memory.numMiners<1){
-            console.log("spawning only miner")
+            //console.log("spawning only miner")
             roleMiner.makeMiner(spawn);
-        } else if(spawn.room.memory.numMovers<1){
-            console.log("spawning only mover")
+        } else if(spawn.room.memory.numMovers<2){
+            //console.log("spawning only 2 mover")
             roleMover.makeMover(spawn);
         } else if (spawn.room.memory.numSlaves<1){
-            console.log("spawning only slave")
+            //console.log("spawning only slave")
             roleSlave.makeSlave(spawn);
         } else if(spawn.room.energyAvailable==spawn.room.energyCapacityAvailable) {       //  1 of each + full
+            //console.log("room full")
             if(roleMiner.checkMiners(spawn)){
                 console.log("spawning additional miner")
                 roleMiner.makeMiner(spawn);
             } else if (roleMover.checkMovers(spawn)){
                 console.log("spawning additional mover")
-                //roleMover.makeMover(spawn)
+                roleMover.makeMover(spawn)
             }else if (roleSlave.checkSlaves(spawn)){
                 console.log("spawning other slaves")
                 //roleSlave.makeSlave(spawn)

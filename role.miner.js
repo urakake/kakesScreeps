@@ -11,46 +11,52 @@ var roleMiner = {
     },
     makeMiner: function(spawn) {
         var cap = spawn.room.energyAvailable;
-        var missingNum;
+        var missingNum=-1;
         for(var i in spawn.room.memory.minerNames){
-            var thisId=spawn.room.memory.minerNames[i];
-            if(thisId==undefined){
+            var thisName=spawn.room.memory.minerNames[i];
+            var thisCreep=Game.creeps[thisName];
+            if(thisCreep==undefined){
+                spawn.room.memory.minerNames[i]="";
                 missingNum=i;
             }
         }
-        console.log(missingNum)
+        
         var creepName="miner"+spawn.room.memory.creepIter+"@"+spawn.room.name;
         var missingNode=spawn.room.memory.sourceIds[missingNum];
         
         spawn.room.memory.minerNames[missingNum]=creepName;
+        
         console.log("Creating Creep ("+creepName+")");
         spawn.room.memory.creepIter++;
+        /*
         if(cap<300){ // under 300
-            //return spawn.createCreep( makeParts(1,1,1), creepName, { role: 'miner', assignedNode: missingNode } );
+            return spawn.createCreep( makeParts(1,1,1), creepName, { role: 'miner', assignedNode: missingNode } );
         } else if(cap<400){   // 300-399
-            //return spawn.createCreep( makeParts(1,1,2), creepName, { role: 'miner', assignedNode: missingNode } );
+            return spawn.createCreep( makeParts(1,1,2), creepName, { role: 'miner', assignedNode: missingNode } );
         } else if(cap<550){   // 400-549
-            //return spawn.createCreep( makeParts(2,2,3), creepName, { role: 'miner', assignedNode: missingNode } );
+            return spawn.createCreep( makeParts(2,2,3), creepName, { role: 'miner', assignedNode: missingNode } );
         } else if(cap<800){   // 550-799
-            //return spawn.createCreep( makeParts(2,2,4), creepName, { role: 'miner', assignedNode: missingNode } );
+            return spawn.createCreep( makeParts(2,2,4), creepName, { role: 'miner', assignedNode: missingNode } );
         } else if(cap<1300){   // 800-1299
-            //return spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', assignedNode: missingNode } );
+            return spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', assignedNode: missingNode } );
         } else if(cap<1800){   // 1300-1799
-            //return spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', assignedNode: missingNode } );
+            return spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', assignedNode: missingNode } );
         } else if(cap<2300){   // 1800-2299
-            //return spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', assignedNode: missingNode } );  
+            return spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', assignedNode: missingNode } );  
         } else {   // 2300+
-            //return spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', assignedNode: missingNode } );
-        }
+            return spawn.createCreep( makeParts(2,4,5), creepName, { role: 'miner', assignedNode: missingNode } );
+        } 
+        //*/
+        
     },
     checkMiners: function(spawn){                //returns true if missing
         var myRoom=spawn.room;
         var foundMissing=false;
-        var missingNum=-1;
         for(var i in myRoom.memory.minerNames){
-            var thisId=myRoom.memory.minerNames[i];
-            if(thisId==undefined || Game.getObjectById(thisId)==undefined){
-                myRoom.memory.minerIds[i]=undefined;
+            var thisName=spawn.room.memory.minerNames[i];
+            var thisCreep=Game.creeps[thisName];
+            if(thisCreep==undefined){
+               // myRoom.memory.minerIds[i]="";
                 foundMissing=true;
             }
         }
@@ -177,14 +183,7 @@ function dumpEnergy(creep) {
         creep.memory.state="acquireEnergy"
     }
 }
-function init(creep) {
-    console.log("Initializing Miner - "+creep.name);
-	creep.memory.init=true;
-	//creep.memory.assignedNode;
- 	//creep.memory.storeBox;
-	creep.memory.role="miner";
-	creep.memory.state="enroute";
-}
+
 function makeParts(moves, carries, works) {
     var list = [];
     for(var i=0;i<moves;i++){
@@ -197,5 +196,19 @@ function makeParts(moves, carries, works) {
         list.push(WORK);
     }
     return list;
+}
+function init(creep) {
+    console.log("Initializing Miner - "+creep.name);
+	creep.memory.init=true;
+	creep.memory.role="miner";
+	creep.memory.state="enroute";
+	if(creep.memory.assignedNode!=undefined){      // set array with your name
+	    for (var i in creep.room.memory.sourceIds){
+	        var src=creep.room.memory.sourceIds[i];
+	        if(src==creep.memory.assignedNode){
+	            creep.room.memory.minerNames[i]=creep.name;
+	        }
+	    }
+	}
 }
 module.exports = roleMiner;

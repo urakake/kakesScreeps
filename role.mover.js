@@ -120,7 +120,6 @@ function moveToPickup(creep,target) {
         if(creep.room.name==target.room.name){
             if(creep.pickup(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target);
-                    
             } else {
                 creep.memory.targetSource=undefined;
             }
@@ -187,7 +186,7 @@ function findDest(creep) {
     } else {     //   find a destination bin
         if (destBins.length>0){
             var target = creep.pos.findClosestByRange(destBins);
-            console.log(target)
+            //console.log(target)
             if (target.store[RESOURCE_ENERGY]==target.storeCapacity){   //  closest bin full find non empty
                 for (var i in creep.room.memory.destBins){
                     target = Game.getObjectById(creep.room.memory.destBins[i]);
@@ -258,15 +257,6 @@ function containerAtCap(structure){
     } 
     return atCap;
 }
-function init(creep) {
-    console.log("Initializing Mover - "+creep.name);
-    creep.memory.init=true;
-	//creep.memory.sourceBin==undefined;
-	//creep.memory.destBin=undefined;
-	creep.memory.targetSource=undefined;
-    creep.memory.targetDest=undefined;
-	creep.memory.state = "acquireEnergy";
-}
 function makeParts(moves, carries, works) {
     var list = [];
     for(var i=0;i<moves;i++){
@@ -279,5 +269,15 @@ function makeParts(moves, carries, works) {
         list.push(WORK);
     }
     return list;
+}
+function init(creep) {
+    console.log("Initializing Mover - "+creep.name);
+    creep.memory.init=true;
+    creep.memory.role="mover";
+	//creep.memory.sourceBin==undefined;
+	//creep.memory.destBin=undefined;
+	creep.memory.targetSource=undefined;
+    creep.memory.targetDest=undefined;
+	creep.memory.state = "acquireEnergy";
 }
 module.exports = roleMover;

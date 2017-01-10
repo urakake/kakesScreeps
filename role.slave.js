@@ -18,18 +18,18 @@ var roleSlave = {
         } else if(cap<550){   // 300-549
             spawn.createCreep( makeParts(2,2,1), creepName, { role: 'slave' } );
         } else if(cap<800){   // 550-799
-            spawn.createCreep( makeParts(3,4,2), creepName, { role: 'slave' } );
+            spawn.createCreep( makeParts(2,4,2), creepName, { role: 'slave' } );
         } else if(cap<1300){   // 800-1299
-            spawn.createCreep( makeParts(4,6,3), creepName, { role: 'slave' } );
+            spawn.createCreep( makeParts(2,4,3), creepName, { role: 'slave' } );
         } else if(cap<1800){   // 1300-1799
-            spawn.createCreep( makeParts(4,6,3), creepName, { role: 'slave' } );
+            spawn.createCreep( makeParts(3,4,4), creepName, { role: 'slave' } );
         } else if(cap<2300){   // 1800-2299
-            spawn.createCreep( makeParts(4,6,3), creepName, { role: 'slave' } );
+            spawn.createCreep( makeParts(4,4,5), creepName, { role: 'slave' } );
         } else {   // 2300+
-            spawn.createCreep( makeParts(4,6,3), creepName, { role: 'slave' } );
+            spawn.createCreep( makeParts(4,4,3), creepName, { role: 'slave' } );
         }
 	},
-	checkSlave: function(spawn){
+	checkSlaves: function(spawn){
 	    var myRoom=spawn.room
 	    var foundMissing=false;
 	    if(myRoom.memory.numSlaves<1){
@@ -38,39 +38,35 @@ var roleSlave = {
 	    return foundMissing;
 	}
 };
-function init(creep) {
-    console.log("Initializing Slave - "+creep.name);
-    creep.memory.init=true;
-	if(creep.memory.assignedNode==undefined){
-	    creep.memory.assignedNode="";
-	} else {
-	    var sources = creep.room.find(FIND_SOURCES);
-    	creep.memory.assignedNode=sources[creep.room.memory.sourceIter].id;
-    	creep.room.memory.sourceIter+=1;
-    	if (creep.room.memory.sourceIter==creep.room.memory.sourceNum){
-    		creep.room.memory.sourceIter=0;
-    	}
-	}
-	if(creep.memory.role==undefined){
-	    creep.memory.role="slave";
-	}
-	
-}
+
 function work(creep) {
-    // check if energy is empty
-	if(creep.carry.energy == 0 && creep.memory.state != "gather") {
-		creep.memory.state = "gather";
-		creep.say('gather');
-	}else if(creep.memory.state == "gather"){
-		gather(creep);
-	} else if(creep.room.controller.level!=8 && creep.memory.state == "upgrade") {
-		upgrade(creep)
-	} else {
-	    dump(creep)
-	}
+	if(creep.memory.state == "acquireEnergy"){
+		acquireEnergy(creep);
+	} else if(creep.memory.state == "dumpEnergy"){
+	    dumpEnergy(creep);
+	} 
 }
-function gather(creep) {
-	if(creep.carry.energy < creep.carryCapacity) {
+function acquireEnergy(creep) {
+    if(creep.memory.sourceBin==undefined){
+        harvestAssignedNode(creep)
+    } else {
+        pickupFromBin(creep)
+    }
+    if(creep.carry.energy==creep.carryCapacity){
+        creep.memory.state = "dumpEnergy";
+    }
+}
+function dumpEnergy(creep) {
+    //if(creep.room.controller.level!=8){
+    if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(creep.room.controller);
+    }
+    if(creep.carry.energy==0){
+        creep.memory.state = "acquireEnergy";
+    }
+}
+function harvestAssignedNode(creep) {
+	if(creep.carry.energy < creep.carryCapacity) {   // not full energy
 	    var targetSource = Game.getObjectById(creep.memory.assignedNode);
 	    if (targetSource!=null){
 	        if(targetSource.energy != 0 && creep.harvest(targetSource) == ERR_NOT_IN_RANGE){
@@ -86,22 +82,24 @@ function gather(creep) {
         		creep.room.memory.sourceIter=0;
         	}
 	    }
-	} else {
+	} else {                                // full energy
 		creep.memory.state = "upgrade";
 		creep.say('upgrade');
 		//work(creep);
 	}
 }
-function upgrade(creep) {
-    if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(creep.room.controller);
+function pickupFromBin(creep){
+    var target=Game.getObjectById(creep.memory.sourceBin);
+    //console.log(target)
+    if(target.transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(target);
     }
 }
-function dump(creep) {
-    if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
-    }
+
+function upgradeController(creep) {
+    
 }
+
 function makeParts(moves, carries, works) {
     var list = [];
     for(var i=0;i<moves;i++){
@@ -115,6 +113,32 @@ function makeParts(moves, carries, works) {
     }
     return list;
 }
-
+function init(creep) {
+    console.log("Initializing Slave - "+creep.name);
+    creep.memory.init=true;
+    creep.memory.role="slave";
+    creep.memory.state="acquireEnergy";
+	if(creep.memory.assignedNode==undefined){               // no assigned node, pick next node
+	    var sources = creep.room.find(FIND_SOURCES);
+    	creep.memory.assignedNode=sources[creep.room.memory.sourceIter].id;
+    	creep.room.memory.sourceIter+=1;
+    	if (creep.room.memory.sourceIter==creep.room.memory.sourceNum){
+    		creep.room.memory.sourceIter=0;
+    	}
+	}
+	if(creep.memory.sourceBin==undefined){                  //no source bin... look for one
+	    var targets = creep.room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                 return ((structure.structureType == STRUCTURE_STORAGE || structure.structureType == STRUCTURE_LINK || structure.structureType == STRUCTURE_CONTAINER))
+            }
+        });
+        if (targets.length>0){
+            var closestBox=creep.room.controller.pos.findClosestByRange(targets);
+            if (creep.room.controller.pos.inRangeTo(closestBox, 8)){
+                creep.memory.sourceBin=closestBox.id;
+            }
+        }
+	}
+}
 
 module.exports = roleSlave;
