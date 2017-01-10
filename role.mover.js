@@ -13,12 +13,8 @@ var roleMover = {
 function init(creep) {
     console.log("Initializing Mover - "+creep.name);
     creep.memory.init=true;
-	if(creep.memory.sourceBin==undefined){
-	    creep.memory.sourceBin=undefined;
-	}
-	if(creep.memory.destBin==undefined){
-	    creep.memory.destBin=undefined;
-	}
+	//creep.memory.sourceBin==undefined;
+	//creep.memory.destBin=undefined;
 	creep.memory.targetSource=undefined;
     creep.memory.targetDest=undefined;
 	creep.memory.state = "acquireEnergy";
@@ -32,30 +28,26 @@ function work(creep) {
 }
 function acquireEnergy(creep) {
     var target;
-    
     if(creep.memory.sourceBin==undefined){
-        if(creep.memory.targetSource==undefined){
-            
+        if(creep.memory.targetSource==undefined){   // no bin no target
             target = findSource(creep);
-        } else {
+        } else {                                    // no bin yes target
             target = Game.getObjectById(creep.memory.targetSource);
             if((target.energy==target.energyCapacity)||(target.store==target.storeCapacity)){
                 target = findSource(creep);
             }
         }
-    } else {
+    } else {                                        // yes bin
         target = Game.getObjectById(creep.memory.sourceBin);
     }
-    if(target){
-        
+    if(target){                                     // go get energy
         if(creep.memory.pickupFlag){
             moveToPickup(creep,target);
         } else {
             moveToGetTransfer(creep,target);
         }
     }
-    
-    if(creep.carry.energy==creep.carryCapacity){
+    if(creep.carry.energy==creep.carryCapacity){    // full energy
         creep.memory.targetSource=undefined
         creep.memory.state = "dumpEnergy";
     }
@@ -63,25 +55,22 @@ function acquireEnergy(creep) {
 function dumpEnergy(creep) {
     var target;
     if(creep.memory.destBin==undefined){
-        if(creep.memory.targetDest==undefined){
+        if(creep.memory.targetDest==undefined){     // no bin no target
             target = findDest(creep);
-        } else {
-            
+        } else {                                    // no bin yes target
             target = Game.getObjectById(creep.memory.targetDest);
-            //console.log(target.energy)
-            if((target.energy!=undefined)&&(target.energy==target.energyCapacity)||(target.store[RESOURCE_ENERGY]!=undefined)&&(target.store[RESOURCE_ENERGY]==target.storeCapacity)){
+            //
+            if(containerAtCap(target)){
                 target = findDest(creep);
             }  
-
         }
-    } else {
+    } else {                                        // yes bin
         target = Game.getObjectById(creep.memory.destBin);
     }
-    //console.log(target)
     if(target){
         moveToGiveTransfer(creep,target);
     }
-    if(creep.carry.energy==0){
+    if(creep.carry.energy==0){                      // out of energy
         creep.memory.targetDest=undefined;
         creep.memory.state = "acquireEnergy";
     }
@@ -110,8 +99,6 @@ function moveToPickup(creep,target) {
     }
 }
 function moveToGetTransfer(creep,target) {
-    //console.log("hit")
-    //console.log(target.store[RESOURCE_ENERGY]+" = "+target.storeCapacity)
     if(target.store[RESOURCE_ENERGY]<target.storeCapacity){
         if(creep.room.name==target.room.name){
             if(target.transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
@@ -124,15 +111,11 @@ function moveToGetTransfer(creep,target) {
         }
         
     } else {
-        
         creep.memory.targetSource=undefined;
-        //destination full
     }
 }
 function moveToGiveTransfer(creep,target) {
-    //console.log(target)
-   // console.log(target.structureType==STRUCTURE_CONTAINER)
-    if((target.energy!=undefined)&&(target.energy==target.energyCapacity)||(target.store[RESOURCE_ENERGY]!=undefined)&&(target.store[RESOURCE_ENERGY]==target.storeCapacity)){
+    if(!containerAtCap(target)){
         if(creep.room.name==target.room.name){
             if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target);
@@ -147,8 +130,6 @@ function moveToGiveTransfer(creep,target) {
     }
 }
 function findDest(creep) {
-    //creep.say("find dest")
-    
     var destBins=[];
     for(var i in creep.room.memory.destBins){
         var destBin=Game.getObjectById(creep.room.memory.destBins[i]);
@@ -188,7 +169,6 @@ function findDest(creep) {
     }
 }
 function findSource(creep) { 
-    
     var sourceBins=[];
     for(var i in creep.room.memory.sourceBins){
         var sourceBin=Game.getObjectById(creep.room.memory.sourceBins[i]);
@@ -230,5 +210,22 @@ function findSource(creep) {
             return target;
         }
     }
+}
+function containerAtCap(structure){
+    var atCap;
+    if(structure.structureType==STRUCTURE_EXTENSION || structure.structureType==STRUCTURE_SPAWN || structure.structureType==STRUCTURE_TOWER || structure.structureType==STRUCTURE_LINK){
+        if (structure.energy==structure.energyCapacity){
+            atCap=true;
+        } else {
+            atCap=false;
+        }
+    } else if (structure.structureType==STRUCTURE_CONTAINER || structure.structureType==STRUCTURE_STORAGE){
+         if (structure.store[RESOURCE_ENERGY]==structure.storeCapacity){
+            atCap=true;
+        } else {
+            atCap=false;
+        }
+    } 
+    return atCap;
 }
 module.exports = roleMover;
