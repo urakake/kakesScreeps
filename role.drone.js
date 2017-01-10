@@ -50,22 +50,20 @@ function work(creep) {
 	}
 	//harvest assigned node
 	if(creep.memory.state == "gather"){
-		gather(creep);
+		acquireEnergy(creep);
 	} else if(creep.memory.state == "find"){
-		find(creep);
-	} else if(creep.memory.state == "charge"){
-	    charge(creep);
-	} else if(creep.memory.state == "craft"){
-		craft(creep)
+		findStorage(creep);
+	} else if(creep.memory.state == "store"){
+	    storeForSpawn(creep);
+	} else if(creep.memory.state == "build"){
+		buildConstructionSites(creep)
 	} else if(creep.memory.state == "upgrade"){
-	    upgrade(creep)
-	} else if(creep.memory.state == "dump"){
-	    dump(creep)
+	    chargeController(creep)
 	} else {
 		creep.memory.state = "find";
 	}
 }
-function find(creep) {
+function findStorage(creep) {
     if (creep.room.controller.ticksToDowngrade<1000){
             creep.memory.state = "upgrade";
     } else {
@@ -77,25 +75,22 @@ function find(creep) {
         });
         if(targets.length) {
                 creep.memory.targetEnergy=creep.pos.findClosestByRange(targets).id;
-    			creep.memory.state = "charge";
+    			creep.memory.state = "store";
     			creep.say('store');
     	} else {
     		var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
     		if(targets.length) {
-    			creep.memory.state = "craft";
+    			creep.memory.state = "build";
     			creep.say('build');
     		} else if(creep.room.controller.level!=8) {
     			creep.memory.state = "upgrade";
     			creep.say('upgrade');
-    		} else {
-    		    creep.memory.state = "dump";
-    			creep.say('dump');
     		}
     	}
     }
     
 }
-function gather(creep) {
+function acquireEnergy(creep) {
 	if(creep.carry.energy < creep.carryCapacity) {
 	    var targetSource = Game.getObjectById(creep.memory.assignedNode);
 	    if (targetSource!=null){
@@ -117,7 +112,7 @@ function gather(creep) {
 		//work(creep);
 	}
 }
-function charge(creep) {
+function storeForSpawn(creep) {
     var target = Game.getObjectById(creep.memory.targetEnergy);
     if(target.energy<target.energyCapacity){
         if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
@@ -133,7 +128,7 @@ function charge(creep) {
         }
 	}
 }
-function craft(creep){
+function buildConstructionSites(creep){
     var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
     if(targets.length) {
         if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
@@ -148,18 +143,8 @@ function craft(creep){
         }
 	}
 }
-function upgrade(creep) {
+function chargeController(creep) {
     if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(creep.room.controller);
-    }
-}
-function dump(creep) {
-    if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
-    }
-}
-function claim(creep) {
-    if(creep.claimController(creep.room.controller)==ERR_NOT_IN_RANGE){
         creep.moveTo(creep.room.controller);
     }
 }
