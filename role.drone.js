@@ -66,29 +66,34 @@ function work(creep) {
 	}
 }
 function find(creep) {
-    var targets = creep.room.find(FIND_STRUCTURES, {
-            filter: (structure) => {
-                 return ((structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) && (structure.energy < structure.energyCapacity) ||
-                    (structure.structureType == STRUCTURE_TOWER) && (structure.energy < structure.energyCapacity*.8))
-            }
-    });
-    if(targets.length) {
-            creep.memory.targetEnergy=creep.pos.findClosestByRange(targets).id;
-			creep.memory.state = "charge";
-			creep.say('store');
-	} else {
-		var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-		if(targets.length) {
-			creep.memory.state = "craft";
-			creep.say('build');
-		} else if(creep.room.controller.level!=8) {
-			creep.memory.state = "upgrade";
-			creep.say('upgrade');
-		} else {
-		    creep.memory.state = "dump";
-			creep.say('dump');
-		}
-	}
+    if (creep.room.controller.ticksToDowngrade<1000){
+            creep.memory.state = "upgrade";
+    } else {
+        var targets = creep.room.find(FIND_STRUCTURES, {
+                filter: (structure) => {
+                     return ((structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) && (structure.energy < structure.energyCapacity) ||
+                        (structure.structureType == STRUCTURE_TOWER) && (structure.energy < structure.energyCapacity*.8))
+                }
+        });
+        if(targets.length) {
+                creep.memory.targetEnergy=creep.pos.findClosestByRange(targets).id;
+    			creep.memory.state = "charge";
+    			creep.say('store');
+    	} else {
+    		var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+    		if(targets.length) {
+    			creep.memory.state = "craft";
+    			creep.say('build');
+    		} else if(creep.room.controller.level!=8) {
+    			creep.memory.state = "upgrade";
+    			creep.say('upgrade');
+    		} else {
+    		    creep.memory.state = "dump";
+    			creep.say('dump');
+    		}
+    	}
+    }
+    
 }
 function gather(creep) {
 	if(creep.carry.energy < creep.carryCapacity) {

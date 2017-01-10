@@ -42,9 +42,9 @@ var roleMiner = {
         } else if(cap<1800){   // 1300-1799
             return spawn.createCreep( makeParts(4,4,6), creepName, { role: 'miner', assignedNode: missingNode } );
         } else if(cap<2300){   // 1800-2299
-            return spawn.createCreep( makeParts(4,4,8), creepName, { role: 'miner', assignedNode: missingNode } );  
+            return spawn.createCreep( makeParts(4,4,7), creepName, { role: 'miner', assignedNode: missingNode } );  
         } else {   // 2300+
-            return spawn.createCreep( makeParts(4,4,8), creepName, { role: 'miner', assignedNode: missingNode } );
+            return spawn.createCreep( makeParts(4,4,7), creepName, { role: 'miner', assignedNode: missingNode } );
         } 
         //*/
         

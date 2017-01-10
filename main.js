@@ -141,7 +141,7 @@ function workTowers(myRoom) {
                 tower.attack(closestHostile);
             } else if (tower.energy>tower.energyCapacity*.7) {
                 var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-                    filter: (structure) => (structure.hits < structure.hitsMax) && (structure.hits < 100000)
+                    filter: (structure) => (structure.hits < structure.hitsMax) && (structure.hits < 250000)
                 });
                 if(closestDamagedStructure) {
                    tower.repair(closestDamagedStructure);
