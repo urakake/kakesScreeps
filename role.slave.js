@@ -11,7 +11,7 @@ var roleSlave = {
 	}, 
 	makeSlave: function(spawn){
 	    var cap = spawn.room.energyAvailable;
-        var creepName="controllerSlave"+spawn.room.memory.creepIter+"@"+spawn.room.name;
+        var creepName="controllerSlave"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
         console.log("Creating Creep ("+creepName+")");
         spawn.room.memory.creepIter++
         if(cap<300){   // under 300
@@ -48,7 +48,7 @@ function work(creep) {
 	} 
 }
 function acquireEnergy(creep) {
-    if(creep.memory.sourceBin==undefined){
+    if(creep.memory.storeBox==undefined){
         harvestAssignedNode(creep)
     } else {
         pickupFromBin(creep)
@@ -89,18 +89,39 @@ function harvestAssignedNode(creep) {
 		//work(creep);
 	}
 }
+function findStorage(creep){
+    var foundStorage=false;
+    var targets = creep.room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                 return (structure.structureType == STRUCTURE_STORAGE || structure.structureType == STRUCTURE_LINK || structure.structureType == STRUCTURE_CONTAINER)
+            }
+    });
+    if (targets.length>0){
+        var closestBox=creep.room.controller.pos.findClosestByRange(targets);
+        if (creep.room.controller.pos.inRangeTo(closestBox, 7)){
+            creep.memory.storeBox=closestBox.id;
+            foundStorage=true;
+            //creep.memory.state = "acquireEnergy";
+            var storageSaved=false;
+            for (var i in creep.room.memory.destBins){
+                if(creep.room.memory.destBins[i]==creep.memory.storeBox){
+                    storageSaved=true
+                }
+            }
+            if(!storageSaved){
+                creep.room.memory.destBins.push(closestBox.id);
+            }
+        }
+    }
+    return foundStorage;
+}
 function pickupFromBin(creep){
-    var target=Game.getObjectById(creep.memory.sourceBin);
+    var target=Game.getObjectById(creep.memory.storeBox);
     //console.log(target)
-    if(target.transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+    if(target.transfer(creep, RESOURCE_ENERGY) < 0) {
         creep.moveTo(target);
     }
 }
-
-function upgradeController(creep) {
-    
-}
-
 function makeParts(moves, carries, works) {
     var list = [];
     for(var i=0;i<moves;i++){
@@ -127,19 +148,7 @@ function init(creep) {
     		creep.room.memory.sourceIter=0;
     	}
 	}
-	if(creep.memory.sourceBin==undefined){                  //no source bin... look for one
-	    var targets = creep.room.find(FIND_STRUCTURES, {
-            filter: (structure) => {
-                 return ((structure.structureType == STRUCTURE_STORAGE || structure.structureType == STRUCTURE_LINK || structure.structureType == STRUCTURE_CONTAINER))
-            }
-        });
-        if (targets.length>0){
-            var closestBox=creep.room.controller.pos.findClosestByRange(targets);
-            if (creep.room.controller.pos.inRangeTo(closestBox, 8)){
-                creep.memory.sourceBin=closestBox.id;
-            }
-        }
-	}
+	findStorage(creep);
 }
 
 module.exports = roleSlave;

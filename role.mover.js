@@ -19,7 +19,7 @@ var roleMover = {
                 missingBin=myRoom.memory.sourceBins[i];
             }
         }
-        var creepName="mover"+spawn.room.memory.creepIter+"@"+spawn.room.name;
+        var creepName="mover"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
         console.log("Creating Creep ("+creepName+")");
         spawn.room.memory.creepIter++;
         if(cap<300){ // under 300
@@ -50,7 +50,7 @@ var roleMover = {
                 foundMissing=true;
             }
         }
-        if(myRoom.memory.numMovers<3){
+        if(myRoom.memory.numMovers<2){
             foundMissing=true;
         }
         return foundMissing;
@@ -70,8 +70,9 @@ function acquireEnergy(creep) {
             target = findSource(creep);
         } else {                                    // no bin yes target
             target = Game.getObjectById(creep.memory.targetSource);
-            if((target.energy==target.energyCapacity)||(target.store==target.storeCapacity)){
+            if(containerEmpty(target)){
                 target = findSource(creep);
+                creep.memory.targetSource=target;
             }
         }
     } else {                                        // yes bin
@@ -106,6 +107,8 @@ function dumpEnergy(creep) {
     }
     if(target){
         moveToGiveTransfer(creep,target);
+    } else {
+        creep.memory.state = "acquireEnergy";
     }
     if(creep.carry.energy==0){                      // out of energy
         creep.memory.targetDest=undefined;
@@ -119,7 +122,7 @@ function voyageOutOfRoom(creep,destRoom) {
     creep.moveTo(Exit);
 }
 function moveToPickup(creep,target) {
-    if(target.store[RESOURCE_ENERGY]>0){
+    if(target){
         if(creep.room.name==target.room.name){
             if(creep.pickup(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target);
@@ -207,6 +210,7 @@ function findDest(creep) {
     }
 }
 function findSource(creep) { 
+    //console.log('find')
     var sourceBins=[];
     for(var i in creep.room.memory.sourceBins){
         var sourceBin=Game.getObjectById(creep.room.memory.sourceBins[i]);
@@ -215,11 +219,7 @@ function findSource(creep) {
         }
     }                                                   //find dropped energy
     creep.memory.pickupFlag=false;
-    var targets = creep.room.find(FIND_DROPPED_ENERGY, {
-        filter: (structure) => { 
-            return (structure.energy < structure.energyCapacity)
-        }
-    });
+    var targets = creep.room.find(FIND_DROPPED_ENERGY)
     if(targets.length){
         var target = creep.pos.findClosestByRange(targets);
         creep.memory.targetSource=target.id;
@@ -229,11 +229,11 @@ function findSource(creep) {
         var target = creep.pos.findClosestByRange(sourceBins);
         if (target==null){
             creep.say("no sources");
-        } else if(target.store[RESOURCE_ENERGY]==target.storeCapacity){ // closest bin full 
+        } else if(target.store[RESOURCE_ENERGY]==0){ // closest bin empty
             for (var i in creep.room.memory.sourceBins){                //find any empty bin
                 target = Game.getObjectById(creep.room.memory.sourceBins[i]);
                 if (target && target.store[RESOURCE_ENERGY]>0){ 
-                    creep.memory.targetDest=target.id;
+                    creep.memory.targetSource=target.id;
                     return target
                 }
             }
@@ -259,6 +259,25 @@ function containerAtCap(structure){
         }
     } 
     return atCap;
+}
+function containerEmpty(structure){
+    var empty;
+    if(structure==null){
+        empty=true;
+    } else if(structure.structureType==STRUCTURE_EXTENSION || structure.structureType==STRUCTURE_SPAWN || structure.structureType==STRUCTURE_TOWER || structure.structureType==STRUCTURE_LINK){
+        if (structure.energy==0){
+            empty=true;
+        } else {
+            empty=false;
+        }
+    } else if (structure.structureType==STRUCTURE_CONTAINER || structure.structureType==STRUCTURE_STORAGE){
+         if (structure.store[RESOURCE_ENERGY]==0){
+            empty=true;
+        } else {
+            empty=false;
+        }
+    } 
+    return empty;
 }
 function makeParts(moves, carries, works) {
     var list = [];

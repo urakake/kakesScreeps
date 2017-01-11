@@ -11,7 +11,7 @@ var roleScout = {
         work(creep);
 	},
 	makeScout: function(spawn){
-	    var creepName="scout"+spawn.room.memory.creepIter+"@"+spawn.room.name+"-"+spawn.room.memory.scoutRoom;
+	    var creepName="scout"+Game.time+"@"+spawn.room.name+"-"+spawn.room.memory.scoutRoom;
 	    spawn.createCreep( makeParts(6,4,5,0), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
 	},
 	checkScouts: function(spawn){
@@ -22,7 +22,7 @@ var roleScout = {
             var scoutRoom=Game.rooms[spawn.room.memory.scoutRoom];
             //console.log(scoutRoom.memory.numDrones)
             //if(scoutRoom!=undefined && (scoutRoom.memory.numScouts>0 || scoutRoom.memory.numDrones>0 || spawn.room.memory.numScouts>0)){
-            if(scoutRoom!=undefined && ((scoutRoom.memory.numScouts+scoutRoom.memory.numDrones+spawn.room.memory.numScouts)>1)){
+            if(scoutRoom!=undefined && ((scoutRoom.memory.numScouts+scoutRoom.memory.numDrones+spawn.room.memory.numScouts)>0)){
                 //console.log("found all scouts")
                 needScout=false;
             }
@@ -55,39 +55,6 @@ function voyageOutOfRoom(creep,destRoom) {
     var exitDir = Game.map.findExit(creep.room.name, destRoom);
     var Exit = creep.pos.findClosestByPath(exitDir);
     creep.moveTo(Exit);
-}
-function getAwayFromWall(creep){
-    var position="";
-    if(creep.pos.y<25){ //north
-        position+="N";
-    } else{             //south
-        position+="S";
-    }
-    if(creep.pos.x<25){     // west
-        position+="w";
-    } else {                //east
-        position+="E";
-    }
-    switch(position) {
-        case "NE":
-            console.log("NE")
-            creep.moveTo(creep.pos.x-1,creep.pos.y+1);
-            break;
-        case "NW":
-            console.log("NW");
-            creep.moveTo(creep.pos.x+1,creep.pos.y+1);
-            break;
-        case "SE":
-            console.log("SE");
-            creep.moveTo(creep.pos.x-1,creep.pos.y-1);
-            break;
-        case "SW":
-            console.log("SW");
-            creep.moveTo(creep.pos.x+1,creep.pos.y-1);
-            break;
-        default:
-    }
-    
 }
 function becomeDrone(creep){
     creep.memory.role="drone";

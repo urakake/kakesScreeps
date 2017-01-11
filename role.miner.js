@@ -21,10 +21,11 @@ var roleMiner = {
             }
         }
         
-        var creepName="miner"+spawn.room.memory.creepIter+"@"+spawn.room.name;
+        var creepName="miner"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
         var missingNode=spawn.room.memory.sourceIds[missingNum];
-        
-        spawn.room.memory.minerNames[missingNum]=creepName;
+        if(missingNum!=-1){
+            spawn.room.memory.minerNames[missingNum]=creepName;
+        }
         
         console.log("Creating Creep ("+creepName+")");
         spawn.room.memory.creepIter++;
@@ -49,7 +50,7 @@ var roleMiner = {
         //*/
         
     },
-    checkMiners: function(spawn){                //returns true if missing
+    checkMiners: function(spawn){  
         var myRoom=spawn.room;
         var foundMissing=false;
         for(var i in myRoom.memory.minerNames){
@@ -101,29 +102,39 @@ function voyageOutOfRoom(creep,destRoom) {
     creep.moveTo(Exit);
 }
 function findStorage(creep){
+    var node = Game.getObjectById(creep.memory.assignedNode);
     var foundStorage=false;
-    var targets = creep.room.find(FIND_STRUCTURES, {
+    var targets = node.room.find(FIND_STRUCTURES, {
             filter: (structure) => {
                  return (structure.structureType == STRUCTURE_STORAGE || structure.structureType == STRUCTURE_LINK || structure.structureType == STRUCTURE_CONTAINER)
             }
     });
     if (targets.length>0){
-        var closestBox=creep.pos.findClosestByRange(targets);
-        if (creep.pos.inRangeTo(closestBox, 7)){
+        var closestBox=node.pos.findClosestByRange(targets);
+        if (node.pos.inRangeTo(closestBox, 7)){
             creep.memory.storeBox=closestBox.id;
             foundStorage=true;
             creep.memory.state = "acquireEnergy";
+            var storageSaved=false;
+            for (var i in creep.room.memory.sourceBins){
+                if(creep.room.memory.sourceBins[i]==creep.memory.storeBox){
+                    storageSaved=true
+                }
+            }
+            if(!storageSaved){
+                creep.room.memory.sourceBins.push(creep.memory.storeBox);
+            }
         }
     }
     if(!foundStorage){
-        var targets = creep.room.find(FIND_CONSTRUCTION_SITES, {
+        var targets = node.room.find(FIND_CONSTRUCTION_SITES, {
             filter: (structure) => {
                  return (structure.structureType == STRUCTURE_CONTAINER)
             }
         });
         if (!targets.length){
-            var closestBox=creep.pos.findClosestByRange(targets);
-            if (creep.pos.inRangeTo(closestBox, 7)){
+            var closestBox=node.pos.findClosestByRange(targets);
+            if (node.pos.inRangeTo(closestBox, 7)){
                 creep.memory.storeBox=closestBox.id;
                 foundStorage=true;
                 creep.memory.state = "buildBox"
@@ -134,18 +145,19 @@ function findStorage(creep){
     }
     return foundStorage;
 }
-function makeBox(creep){ 
-    if (creep.memory.storeBox)
-    creep.room.createConstructionSite(creep.pos.x,creep.pos.y,STRUCTURE_CONTAINER);
-    var targets = creep.room.find(FIND_CONSTRUCTION_SITES, {
+function makeBox(creep){
+    var node = Game.getObjectById(creep.memory.assignedNode);
+    node.room.createConstructionSite(creep.pos.x,creep.pos.y,STRUCTURE_CONTAINER);
+    var targets = node.room.find(FIND_CONSTRUCTION_SITES, {
             filter: (structure) => {
                  return (structure.structureType == STRUCTURE_CONTAINER)
             }
     });
-    creep.memory.storeBox=creep.pos.findClosestByRange(targets).id;
+    creep.memory.storeBox=node.pos.findClosestByRange(targets).id;
     creep.memory.state = "buildBox";
 }
 function buildBox(creep){
+    var node = Game.getObjectById(creep.memory.assignedNode);
     var targetSource=Game.getObjectById(creep.memory.assignedNode);
     var storeBox=Game.getObjectById(creep.memory.storeBox);
     if(creep.carry.energy==creep.carryCapacity){
