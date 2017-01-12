@@ -1,4 +1,4 @@
-/** -------------------------------------------- role.drone ------------------------------------------
+/** ------------------------------------------------------ role.drone -----------------------------------------------------
  * @param {Creep} creep 
  * by Urakake     **/
 		
@@ -24,11 +24,11 @@ var roleDrone = {
                 var foundMissing=true;
             }
         } else if (targets.length<4){
-            if (myRoom.memory.numDrones<2){
+            if (myRoom.memory.numDrones<1){
                 var foundMissing=true;
             }
         } else {
-            if (myRoom.memory.numDrones<3){
+            if (myRoom.memory.numDrones<2){
                 var foundMissing=true;
             }
         }
@@ -399,3 +399,7 @@ function init(creep) {
     creep.memory.target=undefined
 }
 module.exports = roleDrone;
+//------------------------------------------------------ role.drone -----------------------------------------------------
+
+
+

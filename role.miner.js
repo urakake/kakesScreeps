@@ -1,4 +1,4 @@
-/** -------------------------------------------- role.miner ------------------------------------------
+/** -------------------------------------------------------- role.miner --------------------------------------------------------------
  * @param {Creep} creep 
  * by Urakake     **/
 		//Game.rooms['W8N3'].memory.miningRoms.push('W8N2')
@@ -37,7 +37,7 @@ function getMissingMinerSourceId(thisRoom){
         }
     }
     if(missingNum>=0){                    //  found missing node
-        if(myRoom.memory.sourceIds.length<=missingNum){
+        if(myRoom.memory.sourceIds.length>=missingNum){
             myRoom.memory.minerNames.push("");
         }
         srcId = myRoom.memory.sourceIds[missingNum];
@@ -53,7 +53,7 @@ function getMissingMinerSourceId(thisRoom){
                 }
             }
             if(missingNum>=0){                           //  found missing node
-                if(myRoom.memory.sourceIds.length<missingNum){
+                if(myRoom.memory.sourceIds.length>=missingNum){
                     myRoom.memory.minerNames.push("");
                 }                     
                 return myRoom.memory.sourceIds[missingNum];
@@ -122,6 +122,7 @@ function findStorage(creep){
             }
             if(!storageSaved){
                 creep.room.memory.sourceBins.push(creep.memory.storeBox);
+                creep.room.memory.moverNames.push("");
             }
         }
     }
@@ -247,3 +248,8 @@ function init(creep) {
 	}
 }
 module.exports = roleMiner;
+//------------------------------------------------------ role.miner -----------------------------------------------------
+
+
+
+

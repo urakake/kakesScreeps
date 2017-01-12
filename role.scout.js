@@ -1,4 +1,4 @@
-/** -------------------------------------------- role.scout ------------------------------------------
+/** -------------------------------------------------------------- role.scout --------------------------------------------------------------------
  * @param {Creep} creep 
  * Game.spawns('Spawn1').
  * by Urakake     **/
@@ -18,10 +18,11 @@ var roleScout = {
 	    var needScout=false;
 	    if(myRoom.memory.scoutRoom!=undefined){
             var scoutRoom=Game.rooms[myRoom.memory.scoutRoom];
-            if(scoutRoom==undefined)
+            if(scoutRoom==undefined){
                 needScout=true;
-            if(scoutRoom.memory.numDrones==0)
+            }   else if(scoutRoom.memory.numDrones==0){
                 needScout=true;
+            }
 	    }
 	    return needScout;
 	}
@@ -82,3 +83,8 @@ function init(creep) {
 	creep.memory.state="traverse"
 }
 module.exports = roleScout;
+// -------------------------------------------------------------- role.scout --------------------------------------------------------------------
+
+
+
+

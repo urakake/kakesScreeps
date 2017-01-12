@@ -1,4 +1,4 @@
-/** ------------------------------------------------ main -----------------------------------------------
+/** ------------------------------------------------------------- main --------------------------------------------------------------------------------
  *  Game.spawns['Spawn1'].createCreep( [WORK,MOVE,CARRY,CLAIM], "creepName", { role: 'scout', targetRoom: 'W7N3' } );
     Game.spawns['Spawn1'].createCreep( [WORK,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY], "moverTest", { role: 'mover' } )
     Game.spawns['Spawn1'].createCreep( [WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,CARRY,CARRY], "miner1", { role: 'miner', assignedNode: '9263077296e02bb' } );
@@ -103,20 +103,20 @@ function spawnNextUnit(spawn) {
                 roleSlave.makeSlave(spawn);
             } else if(spawn.room.energyAvailable==spawn.room.energyCapacityAvailable) {       //  1 of each + full
                 //console.log("room full")
-                if(roleMiner.checkMiners(spawn.room)){
+                if(roleMiner.checkMiners(spawn)){
                     //console.log("spawning miner already have "+spawn.room.memory.numMiners+" in "+spawn.room)
                     roleMiner.makeMiner(spawn);
                 } else if (roleMover.checkMovers(spawn)){
                 //} else if (spawn.room.memory.numMovers<2){
                     //console.log("spawning mover already have "+spawn.room.memory.numMovers+" in "+spawn.room)
                     roleMover.makeMover(spawn)
-                }else if (roleSlave.checkSlaves(spawn.room)){
+                }else if (roleSlave.checkSlaves(spawn)){
                     //console.log("spawning slave already have "+spawn.room.memory.numSlaves+" in "+spawn.room)
                     roleSlave.makeSlave(spawn)
                 } else if (spawn.room.memory.numDrones<1){
                     //console.log("spawning drone in "+spawn.room)
                     roleDrone.makeDrone(spawn)
-                } else if (roleScout.checkScouts(spawn.room)){
+                } else if (roleScout.checkScouts(spawn)){
                     //console.log("spawning scout in "+spawn.room)
                     roleScout.makeScout(spawn)
                 }
@@ -194,3 +194,8 @@ function initRoom(myRoom) {
 	myRoom.memory.sourceIds = sourceIds;
 	myRoom.memory.minerNames = minerNames;
 }
+// ------------------------------------------------------------- main --------------------------------------------------------------------------------
+
+
+
+

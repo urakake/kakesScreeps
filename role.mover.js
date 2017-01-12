@@ -1,4 +1,4 @@
-/** -------------------------------------------- role.mover ------------------------------------------
+/** ---------------------------------------------------------------- role.mover ----------------------------------------------------------------
  * @param {Creep} creep 
  * by Urakake     **/
 		
@@ -37,7 +37,7 @@ function getMissingSourceBinId(thisRoom){
         }
     }
     if(missingNum>=0){                    //  found missing bin
-        if(myRoom.memory.sourceBins.length<=missingNum){
+        if(myRoom.memory.sourceBins.length>=missingNum){
             myRoom.memory.moverNames.push("");
         }
         srcId = myRoom.memory.sourceBins[missingNum];
@@ -53,7 +53,7 @@ function getMissingSourceBinId(thisRoom){
                 }
             }
             if(missingNum>=0){                           //  found missing bin
-                if(myRoom.memory.sourceBins.length<missingNum){
+                if(myRoom.memory.sourceBins.length>=missingNum){
                     myRoom.memory.moverNames.push("");
                 }                     
                 return myRoom.memory.sourceBins[missingNum];
@@ -369,3 +369,7 @@ function init(creep) {
 	}
 }
 module.exports = roleMover;
+// ---------------------------------------------------------------- role.mover ----------------------------------------------------------------
+
+
+
