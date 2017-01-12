@@ -32,7 +32,9 @@ var roleMover = {
         return foundMissing;
 	}
 };
-function getMissingSourceBinId(myRoom){
+function getMissingSourceBinId(thisRoom){
+    var srcId;
+    var myRoom=thisRoom;
     var missingNum=-1;
     for(var i in myRoom.memory.moverNames){
         var thisName=myRoom.memory.moverNames[i];
@@ -42,28 +44,33 @@ function getMissingSourceBinId(myRoom){
             missingNum=i;
         }
     }
-    if(myRoom.memory.sourceIds.length>=missingNum){
-        return myRoom.memory.sourceIds[missingNum];
-        //myRoom.memory.minerNames[missingNum]=creepName;
-    }
-    else {
-        for (var i in spawn.room.memory.miningRooms){    //   look in this rooms mining rooms
-            myRoom=Game.rooms[spawn.room.memory.miningRooms[i]];
-            for(var i in myRoom.memory.minerNames){
-                var thisName=myRoom.memory.minerNames[i];
+    if(missingNum>=0){                    //  found missing bin
+        if(myRoom.memory.sourceBins.length<=missingNum){
+            myRoom.memory.moverNames.push("");
+        }
+        srcId = myRoom.memory.sourceBins[missingNum];
+    }  else {
+        for (var i in myRoom.memory.miningRooms){    //   look in  mining rooms
+            myRoom=Game.rooms[myRoom.memory.miningRooms[i]];
+            for(var i in myRoom.memory.moverNames){
+                var thisName=myRoom.memory.moverNames[i];
                 var thisCreep=Game.creeps[thisName];
                 if(thisCreep==undefined){
-                    myRoom.memory.minerNames[i]="";
+                    myRoom.memory.moverNames[i]="";
                     missingNum=i;
                 }
             }
-            if(myRoom.memory.sourceIds.length>=missingNum){
-                return myRoom.memory.sourceIds[missingNum];
-                //myRoom.memory.minerNames[missingNum]=creepName;
+            if(missingNum>=0){                           //  found missing bin
+                if(myRoom.memory.sourceBins.length<missingNum){
+                    myRoom.memory.moverNames.push("");
+                }                     
+                return myRoom.memory.sourceBins[missingNum];
+            } else {
+                return undefined;
             }
         }
-        return undefined;
     }
+    return srcId;
 }
 function work(creep) {
     if(creep.memory.state == "acquireEnergy"){
@@ -356,5 +363,16 @@ function init(creep) {
 	creep.memory.targetSource = undefined;
     creep.memory.targetDest = undefined;
 	creep.memory.state = "acquireEnergy";
+	if(creep.memory.sourceBin!=undefined){      // set array with your name
+	    var myBin = Game.getObjectById(creep.memory.sourceBin);
+	    for (var i in myBin.room.memory.sourceBins){
+	        var src=myBin.room.memory.sourceBins[i];
+	        if(src==creep.memory.sourceBin){
+	            myBin.room.memory.moverNames[i]=creep.name;
+	        }
+	    }
+	} else {
+	    //console.log("spawning miner with no target")
+	}
 }
 module.exports = roleMover;

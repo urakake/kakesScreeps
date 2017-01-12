@@ -145,7 +145,7 @@ function getFromBin(creep) {
     var target = Game.getObjectById(creep.memory.target);
     var validSource=false;
     if(target!=undefined && (target.structureType==STRUCTURE_CONTAINER || target.structureType==STRUCTURE_STORAGE || target.structureType==STRUCTURE_LINK ) && target.store[RESOURCE_ENERGY]!=0){
-        if(target.transfer(creep,RESOURCE_ENERGY,(creep.carryCapacity-creep.carry.energy)) == ERR_NOT_IN_RANGE){
+        if(target.transfer(creep,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE){
         	creep.moveTo(target);
         	validSource=true;
         }

@@ -1,7 +1,7 @@
 /** -------------------------------------------- role.miner ------------------------------------------
  * @param {Creep} creep 
  * by Urakake     **/
-		
+		//Game.rooms['W8N3'].memory.miningRoms.push('W8N2')
 var roleMiner = {
     run: function(creep) {
         if(!creep.memory.init){
@@ -13,9 +13,9 @@ var roleMiner = {
         var myRoom=spawn.room;
         var cap = spawn.room.energyAvailable;
         var creepName="miner"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
-        var missingNode = getMissingMinerSourceId(thisRoom);
+        var missingNode = getMissingMinerSourceId(myRoom);
         console.log("Creating Creep ("+creepName+")");
-        return spawn.createCreep( makeBestBody(cap), creepName, { role: 'miner', assignedNode: missingNode } );
+        //return spawn.createCreep( makeBestBody(cap), creepName, { role: 'miner', assignedNode: missingNode } );
     },
     checkMiners: function(myRoom){  
         var foundMissing=false;
@@ -31,9 +31,7 @@ var roleMiner = {
     }
 };
 function getMissingMinerSourceId(thisRoom){
-    if(creepName==undefined){
-        creepName="";
-    }
+    var srcId;
     var myRoom=thisRoom;
     var missingNum=-1;
     for(var i in myRoom.memory.minerNames){
@@ -43,17 +41,19 @@ function getMissingMinerSourceId(thisRoom){
             myRoom.memory.minerNames[i]="";
             missingNum=i;
         }
+        
     }
-    if(missingNum>0){                    //  found missing node
+    if(missingNum>=0){                    //  found missing node
         if(myRoom.memory.sourceIds.length<=missingNum){
             myRoom.memory.minerNames.push("");
         }
-        return myRoom.memory.sourceIds[missingNum];
+        srcId = myRoom.memory.sourceIds[missingNum];
+        //console.log(srcId);
         //myRoom.memory.minerNames[missingNum]=creepName;
 
     }  else {
-        for (var i in spawn.room.memory.miningRooms){    //   look in  mining rooms
-            myRoom=Game.rooms[spawn.room.memory.miningRooms[i]];
+        for (var i in myRoom.memory.miningRooms){    //   look in  mining rooms
+            myRoom=Game.rooms[myRoom.memory.miningRooms[i]];
             for(var i in myRoom.memory.minerNames){
                 var thisName=myRoom.memory.minerNames[i];
                 var thisCreep=Game.creeps[thisName];
@@ -62,16 +62,18 @@ function getMissingMinerSourceId(thisRoom){
                     missingNum=i;
                 }
             }
-            if(missingNum>0){                           //  found missing node
+            if(missingNum>=0){                           //  found missing node
                 if(myRoom.memory.sourceIds.length<missingNum){
                     myRoom.memory.minerNames.push("");
                 }                     
                 return myRoom.memory.sourceIds[missingNum];
                 //myRoom.memory.minerNames[missingNum]=creepName;
+            } else {
+                return undefined;
             }
         }
-        return undefined;
     }
+    return srcId;
 }
 function work(creep) {
     if (creep.memory.state=="enroute"){
