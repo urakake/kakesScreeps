@@ -1,7 +1,7 @@
 /** -------------------------------------------------------- role.miner --------------------------------------------------------------
  * @param {Creep} creep 
  * by Urakake     **/
-		//Game.rooms['W8N3'].memory.miningRoms.push('W8N2')
+		//
 var roleMiner = {
     run: function(creep) {
         if(!creep.memory.init){

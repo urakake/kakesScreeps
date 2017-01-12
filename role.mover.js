@@ -56,6 +56,8 @@ function getMissingSourceBinId(thisRoom){
                     return undefined;
                 }
             } else {
+                //cant see mining room need to send scout
+                return undefined;
                 //mining room undefinedc
             }
         }

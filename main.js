@@ -3,6 +3,10 @@
     Game.spawns['Spawn1'].createCreep( [WORK,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY], "moverTest", { role: 'mover' } )
     Game.spawns['Spawn1'].createCreep( [WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,CARRY,CARRY], "miner1", { role: 'miner', assignedNode: '9263077296e02bb' } );
 
+    Game.rooms['W8N3'].memory.miningRoms.push('W8N2');
+    Game.rooms['W8N3'].memory.scoutRoom = 'W8N2';
+    Game.rooms['W8N2'].memory.capture = true;
+
  * 				still need to:
  *                  mine adjacent room
  *                  movers across rooms
