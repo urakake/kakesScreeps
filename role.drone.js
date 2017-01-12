@@ -76,12 +76,12 @@ function acquireEnergy(creep) {
     if(targets.length>0)
         target = creep.pos.findClosestByRange(targets);
     if(target!=undefined && target.amount>50){                   // found dropped energy
-    
         creep.memory.target=target.id;
         creep.memory.state = "pickup";
         creep.say("pickup");
     } else {
         var targets = [];
+        target=undefined;
         for(var i in creep.room.memory.sourceBins){
             var bin = Game.getObjectById(creep.room.memory.sourceBins[i]);
             //console.log(containerEmpty(bin))

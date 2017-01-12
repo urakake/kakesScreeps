@@ -19,14 +19,7 @@ var roleMover = {
 	},
 	checkMovers: function(myRoom) {
     	var foundMissing=false;
-        for(var i in myRoom.memory.moverNames){
-            var thisId=myRoom.memory.moverNames[i];
-            if(thisId==undefined || Game.getObjectById(thisId)==undefined){
-                myRoom.memory.moverIds[i]=undefined;
-                foundMissing=true;
-            }
-        }
-        if(myRoom.memory.numMovers<2){
+        if(getMissingSourceBinId(myRoom) != undefined){
             foundMissing=true;
         }
         return foundMissing;
@@ -231,7 +224,7 @@ function findDest(creep) {
                 destBins=[];
                 for(var i in myRoom.memory.destBins){
                     var destBin=Game.getObjectById(myRoom.memory.destBins[i]);
-                    if(destBin){
+                    if(destBin && !containerAtCap(destBin)){
                         destBins.push(destBin);
                     }
                 }
@@ -242,6 +235,7 @@ function findDest(creep) {
                 }
             }
         }
+        
         
     }
 }

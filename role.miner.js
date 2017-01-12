@@ -15,17 +15,12 @@ var roleMiner = {
         var creepName="miner"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
         var missingNode = getMissingMinerSourceId(myRoom);
         console.log("Creating Creep ("+creepName+")");
-        //return spawn.createCreep( makeBestBody(cap), creepName, { role: 'miner', assignedNode: missingNode } );
+        return spawn.createCreep( makeBestBody(cap), creepName, { role: 'miner', assignedNode: missingNode } );
     },
     checkMiners: function(myRoom){  
         var foundMissing=false;
-        for(var i in myRoom.memory.minerNames){
-            var thisName=myRoom.memory.minerNames[i];
-            var thisCreep=Game.creeps[thisName];
-            if(thisCreep==undefined){
-               // myRoom.memory.minerIds[i]="";
-                foundMissing=true;
-            }
+        if(getMissingMinerSourceId(myRoom) != undefined){
+            foundMissing=true;
         }
         return foundMissing;
     }
@@ -41,16 +36,12 @@ function getMissingMinerSourceId(thisRoom){
             myRoom.memory.minerNames[i]="";
             missingNum=i;
         }
-        
     }
     if(missingNum>=0){                    //  found missing node
         if(myRoom.memory.sourceIds.length<=missingNum){
             myRoom.memory.minerNames.push("");
         }
         srcId = myRoom.memory.sourceIds[missingNum];
-        //console.log(srcId);
-        //myRoom.memory.minerNames[missingNum]=creepName;
-
     }  else {
         for (var i in myRoom.memory.miningRooms){    //   look in  mining rooms
             myRoom=Game.rooms[myRoom.memory.miningRooms[i]];
@@ -67,7 +58,6 @@ function getMissingMinerSourceId(thisRoom){
                     myRoom.memory.minerNames.push("");
                 }                     
                 return myRoom.memory.sourceIds[missingNum];
-                //myRoom.memory.minerNames[missingNum]=creepName;
             } else {
                 return undefined;
             }
@@ -142,7 +132,7 @@ function findStorage(creep){
                  return (structure.structureType == STRUCTURE_CONTAINER)
             }
         });
-        if (!targets.length){
+        if (targets.length>0){
             var closestBox=node.pos.findClosestByRange(targets);
             if (node.pos.inRangeTo(closestBox, 7)){
                 creep.memory.storeBox=closestBox.id;
