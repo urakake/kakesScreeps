@@ -16,14 +16,21 @@ var roleDrone = {
 	    spawn.createCreep( makeBestBody(cap), creepName, { role: 'drone' } );
 	},
 	checkDrones: function(spawn){
-	    //if room has alot of construct sites
-	    
-	    
-	    
 	    var myRoom=spawn.room;
 	    var foundMissing=false;
-        if (myRoom.memory.numDrones<=3){
-            var foundMissing=true;
+        var targets = spawn.room.find(FIND_CONSTRUCTION_SITES);
+        if (targets.length<2){
+            if (myRoom.memory.numDrones<1){
+                var foundMissing=true;
+            }
+        } else if (targets.length<4){
+            if (myRoom.memory.numDrones<2){
+                var foundMissing=true;
+            }
+        } else {
+            if (myRoom.memory.numDrones<3){
+                var foundMissing=true;
+            }
         }
         return foundMissing;
 	}

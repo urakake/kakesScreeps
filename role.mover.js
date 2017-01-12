@@ -12,38 +12,15 @@ var roleMover = {
 	makeMover: function(spawn) {
 	    var myRoom=spawn.room;
 	    var cap = spawn.room.energyAvailable;
-        var missingBin;
-        for(var i in myRoom.memory.moverIds){
-            var thisId=myRoom.memory.moverIds[i];
-            if(thisId==undefined || Game.getObjectById(thisId)==undefined){
-                missingBin=myRoom.memory.sourceBins[i];
-            }
-        }
-        var creepName="mover"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
-        console.log("Creating Creep ("+creepName+")");
-        spawn.room.memory.creepIter++;
-        if(cap<300){ // under 300
-            spawn.createCreep( makeParts(1,1,0), creepName, { role: 'mover', sourceBin: missingBin } );
-        } else if(cap<400){   // 300-399
-            spawn.createCreep( makeParts(2,2,0), creepName, { role: 'mover', sourceBin: missingBin } );
-        } else if(cap<550){   // 400-549
-            spawn.createCreep( makeParts(3,3,0), creepName, { role: 'mover', sourceBin: missingBin } );
-        } else if(cap<800){   // 550-799
-            spawn.createCreep( makeParts(4,5,01), creepName, { role: 'mover', sourceBin: missingBin } );
-        } else if(cap<1300){   // 800-1299
-            spawn.createCreep( makeParts(6,8,0), creepName, { role: 'mover', sourceBin: missingBin } );
-        } else if(cap<1800){   // 1300-1799
-            spawn.createCreep( makeParts(8,10,0), creepName, { role: 'mover', sourceBin: missingBin } );
-        } else if(cap<2300){   // 1800-2299
-            spawn.createCreep( makeParts(8,10,0), creepName, { role: 'mover', sourceBin: missingBin } );  
-        } else {   // 2300+
-            spawn.createCreep( makeParts(8,10,0), creepName, { role: 'mover', sourceBin: missingBin } );
-        }
+	    var creepName = "mover"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
+	    var missingBin = getMissingSourceBinId(myRoom);
+	    console.log("Creating Creep ("+creepName+")");
+	    return spawn.createCreep( makeBestBody(cap), creepName, { role: 'mover', sourceBin: missingBin } );
 	},
 	checkMovers: function(myRoom) {
     	var foundMissing=false;
-        for(var i in myRoom.memory.moverIds){
-            var thisId=myRoom.memory.moverIds[i];
+        for(var i in myRoom.memory.moverNames){
+            var thisId=myRoom.memory.moverNames[i];
             if(thisId==undefined || Game.getObjectById(thisId)==undefined){
                 myRoom.memory.moverIds[i]=undefined;
                 foundMissing=true;
@@ -55,6 +32,39 @@ var roleMover = {
         return foundMissing;
 	}
 };
+function getMissingSourceBinId(myRoom){
+    var missingNum=-1;
+    for(var i in myRoom.memory.moverNames){
+        var thisName=myRoom.memory.moverNames[i];
+        var thisCreep=Game.creeps[thisName];
+        if(thisCreep==undefined){
+            myRoom.memory.moverNames[i]="";
+            missingNum=i;
+        }
+    }
+    if(myRoom.memory.sourceIds.length>=missingNum){
+        return myRoom.memory.sourceIds[missingNum];
+        //myRoom.memory.minerNames[missingNum]=creepName;
+    }
+    else {
+        for (var i in spawn.room.memory.miningRooms){    //   look in this rooms mining rooms
+            myRoom=Game.rooms[spawn.room.memory.miningRooms[i]];
+            for(var i in myRoom.memory.minerNames){
+                var thisName=myRoom.memory.minerNames[i];
+                var thisCreep=Game.creeps[thisName];
+                if(thisCreep==undefined){
+                    myRoom.memory.minerNames[i]="";
+                    missingNum=i;
+                }
+            }
+            if(myRoom.memory.sourceIds.length>=missingNum){
+                return myRoom.memory.sourceIds[missingNum];
+                //myRoom.memory.minerNames[missingNum]=creepName;
+            }
+        }
+        return undefined;
+    }
+}
 function work(creep) {
     if(creep.memory.state == "acquireEnergy"){
 		acquireEnergy(creep);
@@ -171,7 +181,7 @@ function findDest(creep) {
     var destBins=[];
     for(var i in creep.room.memory.destBins){
         var destBin=Game.getObjectById(creep.room.memory.destBins[i]);
-        if(destBin){
+        if(destBin && !containerAtCap(destBin)){
             destBins.push(destBin);
         }
     }
@@ -192,7 +202,7 @@ function findDest(creep) {
         if (destBins.length>0){
             var target = creep.pos.findClosestByRange(destBins);
             //console.log(target)
-            if (target.store[RESOURCE_ENERGY]==target.storeCapacity){   //  closest bin full find non empty
+            if (target.store[RESOURCE_ENERGY]==target.storeCapacity){   //  closest bin full, find non empty bind
                 target=undefined;
                 for (var i in creep.room.memory.destBins){
                     target = Game.getObjectById(creep.room.memory.destBins[i]);
@@ -211,7 +221,18 @@ function findDest(creep) {
         if(!foundBin){
             if(creep.room.name!=creep.memory.spawnRoom){
                 var myRoom=Game.rooms[creep.memory.spawnRoom]
-                voyageOutOfRoom(creep,myRoom);
+                destBins=[];
+                for(var i in myRoom.memory.destBins){
+                    var destBin=Game.getObjectById(myRoom.memory.destBins[i]);
+                    if(destBin){
+                        destBins.push(destBin);
+                    }
+                }
+                var target = creep.pos.findClosestByRange(destBins);
+                if(target){
+                    creep.memory.targetDest=target.id;
+                    return target;
+                }
             }
         }
         
@@ -290,6 +311,27 @@ function containerEmpty(structure){
         }
     } 
     return empty;
+}
+function makeBestBody(cap){
+    var body = [];
+    if(cap<300){   // under 300
+        body = makeParts(1,1,0)
+    } else if(cap<400){   // 300-399
+        body = makeParts(2,4,0)
+    } else if(cap<550){   // 400-549
+        body = makeParts(3,6,0)
+    } else if(cap<800){   // 550-799
+        body = makeParts(4,8,0)
+    } else if(cap<1300){   // 800-1299
+        body = makeParts(5,10,0)
+    } else if(cap<1800){   // 1300-1799
+        body = makeParts(6,12,0)
+    } else if(cap<2300){   // 1800-2299
+        body = makeParts(7,14,0)
+    } else {   // 2300+
+        body = makeParts(8,16,0)
+    }
+    return body;
 }
 function makeParts(moves, carries, works) {
     var list = [];

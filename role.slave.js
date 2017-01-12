@@ -32,7 +32,7 @@ var roleSlave = {
 	},
 	checkSlaves: function(myRoom){
 	    var foundMissing=false;
-	    if(myRoom.memory.numSlaves<2){
+	    if(myRoom.memory.numSlaves<1){
 	        foundMissing=true;
 	    }
 	    return foundMissing;
