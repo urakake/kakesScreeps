@@ -12,7 +12,7 @@ var roleScout = {
 	},
 	makeScout: function(spawn){
 	    var creepName="scout"+Game.time+"@"+spawn.room.name+"-"+spawn.room.memory.scoutRoom;
-	    spawn.createCreep( makeParts(5,4,4,2), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
+	    spawn.createCreep( makeParts(5,4,4,1), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
 	},
 	checkScouts: function(myRoom){
 	    var needScout=false;
@@ -31,8 +31,6 @@ var roleScout = {
 function work(creep) {
 	if(creep.memory.state == "traverse") {
 	    traverse(creep);
-	} else if(creep.memory.state == "move"){
-	    getAwayFromWall(creep)
 	} else if(creep.memory.state == "drone"){
 		creep.memory.role="drone";
 		creep.memory.init=false;
@@ -40,12 +38,18 @@ function work(creep) {
 }
 
 function traverse(creep){
-    var targetRoom=creep.memory.scoutRoom
+    var targetRoom=creep.memory.scoutRoom;
+    //console.log(targetRoom+"  "+creep.memory.scoutRoom)
     if(creep.room.name != targetRoom){
-        voyageOutOfRoom(creep,targetRoom);
+        if(creep.pos.x<=48 && creep.pos.y<=48 && creep.pos.x>=1 && creep.pos.y>=1){
+            becomeDrone(creep);
+        } else {
+            creep.moveTo(creep.room.controller.pos);
+        }
+        
     } else {
-        creep.moveTo(creep.room.controller.pos);
-        becomeDrone(creep);
+        voyageOutOfRoom(creep,targetRoom);
+        
     }
 }
 function voyageOutOfRoom(creep,destRoom) {

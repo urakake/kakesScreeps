@@ -84,15 +84,19 @@ function work(creep) {
 function moveToNode(creep){
     var targetSource=Game.getObjectById(creep.memory.assignedNode);
     if(targetSource!=undefined){
-        if(creep.room.name != targetSource.room.name){
-            voyageOutOfRoom(creep,targetSource.room);
+        if(creep.room.name == targetSource.room.name){
+            if(creep.pos.x<=48 && creep.pos.y<=48 && creep.pos.x>=1 && creep.pos.y>=1){
+                if(creep.harvest(targetSource) == ERR_NOT_IN_RANGE){
+    			    creep.moveTo(targetSource);
+    		    } else { 
+    		        creep.memory.state = "find";
+    		        creep.say('find')
+                }
+            } else {
+                creep.moveTo(targetSource.room.controller);
+            }
         } else {
-    	    if(creep.harvest(targetSource) == ERR_NOT_IN_RANGE){
-    			creep.moveTo(targetSource);
-    		} else { 
-    		    creep.memory.state = "find";
-    		    creep.say('find')
-    		}
+            voyageOutOfRoom(creep,targetSource.room);
         }
     }
 }

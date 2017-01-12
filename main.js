@@ -49,7 +49,7 @@ module.exports.loop = function () {
 			}
 		}
         if (thisSpawn && thisSpawn.structureType==STRUCTURE_SPAWN && !thisSpawn.spawning){
-        spawnNextUnit(thisSpawn);
+            spawnNextUnit(thisSpawn);
 		}
 	}
 }
@@ -100,12 +100,14 @@ function spawnNextUnit(spawn) {
                 roleDrone.makeDrone(spawn);
             } else if (spawn.room.memory.numMiners<1){
                 roleMiner.makeMiner(spawn);
-            } else if (spawn.room.energyAvailable==spawn.room.energyCapacityAvailable){
+            } else if (spawn.room.energyAvailable==spawn.room.energyCapacityAvailable){ 
+                //console.log(spawn.room.name+" is full")
                 if (roleMiner.checkMiners(spawn.room)){
                     roleMiner.makeMiner(spawn);
                 } else if (roleDrone.checkDrones(spawn.room)){
                     roleDrone.makeDrone(spawn);
                 } else if (roleMover.checkMovers(spawn.room)){
+                    //console.log(spawn.room.name+" is full")
                     roleMover.makeMover(spawn);
                 }else if (roleSlave.checkSlaves(spawn.room)){
                     roleSlave.makeSlave(spawn)

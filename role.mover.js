@@ -132,17 +132,20 @@ function voyageOutOfRoom(creep,destRoom) {
 function moveToPickup(creep,target) {
     if(target){
         if(creep.room.name==target.room.name){
-            if(creep.pickup(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            if(creep.pos.x<=48 && creep.pos.y<=48 && creep.pos.x>=1 && creep.pos.y>=1){
+                if(creep.pickup(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target);
+                } else {
+                    creep.memory.targetSource=undefined;
+                }
             } else {
-                creep.memory.targetSource=undefined;
+                creep.moveTo(targetSource.room.controller);
             }
         } else {
             voyageOutOfRoom(creep,target.room)
         }
     } else {
         creep.memory.targetSource=undefined;
-        //findSource(creep);
     }
 }
 function moveToGetTransfer(creep,target) {
