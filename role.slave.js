@@ -13,29 +13,23 @@ var roleSlave = {
 	    var cap = spawn.room.energyAvailable;
         var creepName="controllerSlave"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
         console.log("Creating Creep ("+creepName+")");
-        spawn.room.memory.creepIter++
-        if(cap<300){   // under 300
-            spawn.createCreep( makeParts(1,1,1), creepName, { role: 'slave' } );
-        } else if(cap<550){   // 300-549
-            spawn.createCreep( makeParts(2,2,1), creepName, { role: 'slave' } );
-        } else if(cap<800){   // 550-799
-            spawn.createCreep( makeParts(2,4,2), creepName, { role: 'slave' } );
-        } else if(cap<1300){   // 800-1299
-            spawn.createCreep( makeParts(4,4,4), creepName, { role: 'slave' } );
-        } else if(cap<1800){   // 1300-1799
-            spawn.createCreep( makeParts(4,4,8), creepName, { role: 'slave' } );
-        } else if(cap<2300){   // 1800-2299
-            spawn.createCreep( makeParts(4,4,10), creepName, { role: 'slave' } );
-        } else {   // 2300+
-            spawn.createCreep( makeParts(4,4,10), creepName, { role: 'slave' } );
-        }
+        return spawn.createCreep( makeBestBody(cap), creepName, { role: 'slave' } );
 	},
 	checkSlaves: function(myRoom){
 	    var foundMissing=false;
 	    if(myRoom.memory.numSlaves<1){
-	        foundMissing=true;
+	        var targets = creep.room.find(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (structure.structureType == STRUCTURE_STORAGE || structure.structureType == STRUCTURE_LINK || structure.structureType == STRUCTURE_CONTAINER)
+                }
+            });
+            if (targets.length>0){
+                var closestBox=creep.room.controller.pos.findClosestByRange(targets);
+                if (creep.room.controller.pos.inRangeTo(closestBox, 8)){
+                    foundMissing=true;
+                }
+            }
 	    }
-	    return foundMissing;
 	}
 };
 
@@ -120,6 +114,25 @@ function pickupFromBin(creep){
     if(target.transfer(creep, RESOURCE_ENERGY) < 0) {
         creep.moveTo(target);
     }
+}
+function makeBestBody(cap){
+    var body = [];
+    if(cap<300){   // under 300
+        body =  makeParts(1,1,1);
+    } else if(cap<550){   // 300-549
+        body =  makeParts(2,2,1);
+    } else if(cap<800){   // 550-799
+        body =  makeParts(2,4,2);
+    } else if(cap<1300){   // 800-1299
+        body =  makeParts(4,4,4);
+    } else if(cap<1800){   // 1300-1799
+        body = makeParts(4,4,8);
+    } else if(cap<2300){   // 1800-2299
+        body = makeParts(4,4,10);
+    } else {   // 2300+
+        body = makeParts(4,4,10);
+    }
+    return body;
 }
 function makeParts(moves, carries, works) {
     var list = [];

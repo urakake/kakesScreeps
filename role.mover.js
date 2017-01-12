@@ -10,10 +10,9 @@ var roleMover = {
         work(creep);
 	},
 	makeMover: function(spawn) {
-	    var myRoom=spawn.room;
 	    var cap = spawn.room.energyAvailable;
 	    var creepName = "mover"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
-	    var missingBin = getMissingSourceBinId(myRoom);
+	    var missingBin = getMissingSourceBinId(spawn.room);
 	    console.log("Creating Creep ("+creepName+")");
 	    return spawn.createCreep( makeBestBody(cap), creepName, { role: 'mover', sourceBin: missingBin } );
 	},

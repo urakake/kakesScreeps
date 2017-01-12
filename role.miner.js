@@ -10,10 +10,9 @@ var roleMiner = {
         work(creep);
     },
     makeMiner: function(spawn) {
-        var myRoom=spawn.room;
         var cap = spawn.room.energyAvailable;
-        var creepName="miner"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
-        var missingNode = getMissingMinerSourceId(myRoom);
+        var creepName = "miner"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
+        var missingNode = getMissingMinerSourceId(spawn.room);
         console.log("Creating Creep ("+creepName+")");
         return spawn.createCreep( makeBestBody(cap), creepName, { role: 'miner', assignedNode: missingNode } );
     },
