@@ -12,7 +12,7 @@ var roleScout = {
 	},
 	makeScout: function(spawn){
 	    var creepName="scout"+Game.time+"@"+spawn.room.name+"-"+spawn.room.memory.scoutRoom;
-	    spawn.createCreep( makeParts(6,4,4,1), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
+	    spawn.createCreep( makeParts(6,4,4,0), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
 	},
 	checkScouts: function(spawn){
 	    //console.log(spawn.room.memory.scoutRoom)
@@ -20,10 +20,7 @@ var roleScout = {
 	    if(spawn.room.memory.scoutRoom!=undefined){
 	        needScout=true;
             var scoutRoom=Game.rooms[spawn.room.memory.scoutRoom];
-            //console.log(scoutRoom.memory.numDrones)
-            //if(scoutRoom!=undefined && (scoutRoom.memory.numScouts>0 || scoutRoom.memory.numDrones>0 || spawn.room.memory.numScouts>0)){
-            if(scoutRoom!=undefined && ((scoutRoom.memory.numScouts+scoutRoom.memory.numDrones+spawn.room.memory.numScouts)>0)){
-                //console.log("found all scouts")
+            if(scoutRoom!=undefined && (scoutRoom.find(FIND_MY_CREEPS).length>0 || spawn.room.memory.numScouts>0)){
                 needScout=false;
             }
 	    }
@@ -60,7 +57,7 @@ function becomeDrone(creep){
     creep.memory.role="drone";
     creep.memory.init=false;
 }
-function makeParts(moves, carries, works, claim) {
+function makeParts(moves, carries, works, claims) {
     var list = [];
     for(var i=0;i<moves;i++){
         list.push(MOVE);
@@ -70,6 +67,9 @@ function makeParts(moves, carries, works, claim) {
     }
     for(var i=0;i<works;i++){
         list.push(WORK);
+    }
+    for(var i=0;i<claims;i++){
+        list.push(CLAIM);
     }
     return list;
 }

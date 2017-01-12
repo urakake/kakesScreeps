@@ -64,7 +64,8 @@ function acquireEnergy(creep) {
     var targets = creep.room.find(FIND_DROPPED_ENERGY);
     if(targets.length>0)
         target = creep.pos.findClosestByRange(targets);
-    if(target!=undefined){                                      // found dropped energy
+    if(target!=undefined && target.amount>50){                   // found dropped energy
+    
         creep.memory.target=target.id;
         creep.memory.state = "pickup";
         creep.say("pickup");
@@ -72,14 +73,16 @@ function acquireEnergy(creep) {
         var targets = [];
         for(var i in creep.room.memory.sourceBins){
             var bin = Game.getObjectById(creep.room.memory.sourceBins[i]);
+            //console.log(containerEmpty(bin))
             if(bin!=undefined && !containerEmpty(bin)){
                 targets.push(bin);
             }
         }
         if(targets.length>0)
             target = creep.pos.findClosestByRange(targets);
-        if(target!=undefined){                                  // found source bin
+        if(target!=undefined){    // found source bin
             creep.memory.target=target.id;
+            console.log(target.id)
             creep.memory.state = "getFromBin";
             creep.say("fill");
         } else {
@@ -108,47 +111,66 @@ function acquireEnergy(creep) {
 }
 function pickupEnergy(creep) {
     var target = Game.getObjectById(creep.memory.target);
-    if(target!=undefined){
+    var validSource=false;
+    if(target!=undefined && target.amount>15){
         if(creep.pickup(target) == ERR_NOT_IN_RANGE){
         	creep.moveTo(target);
+        	validSource=true;
         }
     }
     if(creep.carry.energy==creep.carryCapacity){
         creep.memory.state = "dump";
     } else {
-        if(target==undefined||target.amount<4){
-            creep.memory.state = "acquire";
+        if(!validSource){
+            if((creep.carry.energy*2)<creep.carryCapacity){
+                creep.memory.state = "acquire";
+            } else {
+                creep.memory.state = "dump";
+            }
         }
     }
 }
 function getFromBin(creep) {
     var target = Game.getObjectById(creep.memory.target);
-    //console.log(target)
-    if(target!=undefined){
+    var validSource=false;
+    if(target!=undefined && (target.structureType==STRUCTURE_CONTAINER || target.structureType==STRUCTURE_STORAGE || target.structureType==STRUCTURE_LINK ) && target.store[RESOURCE_ENERGY]!=0){
         if(target.transfer(creep,RESOURCE_ENERGY,(creep.carryCapacity-creep.carry.energy)) == ERR_NOT_IN_RANGE){
         	creep.moveTo(target);
+        	validSource=true;
         }
     }
     if(creep.carry.energy==creep.carryCapacity){
         creep.memory.state = "dump";
     } else {
-        if(target==undefined||target.store[RESOURCE_ENERGY]==0){
-            creep.memory.state = "acquire";
+        if(!validSource){
+            if((creep.carry.energy*2)<creep.carryCapacity){
+                creep.memory.state = "acquire";
+            } else {
+                creep.memory.state = "dump";
+            }
         }
     }
 }
 function harvestNode(creep) {
     var target = Game.getObjectById(creep.memory.target);
-    if(target!=undefined){
+    var validSource=false;
+    if(target!=undefined && target.energy>0){
         if(creep.harvest(target) == ERR_NOT_IN_RANGE){
         	creep.moveTo(target);
+        	validSource=true;
+        } else {
+            validSource=true;
         }
     }
     if(creep.carry.energy==creep.carryCapacity){
         creep.memory.state = "dump";
     } else {
-        if(target==undefined||target.energy==0){
-            creep.memory.state = "acquire";
+        if(!validSource){
+            if((creep.carry.energy*2)<creep.carryCapacity){
+                creep.memory.state = "acquire";
+            } else {
+                creep.memory.state = "dump";
+            }
         }
     }
 }
@@ -205,41 +227,69 @@ function dumpEnergy(creep) {
 }
 function storeForSpawn(creep) {
     var target = Game.getObjectById(creep.memory.target);
+    var validSource=false;
     if(target!=undefined){
         if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
-        } else {
-            creep.memory.state = "dump";
+            validSource=true;
         }
     }
-    if(creep.carry.energy==0){ 
-        creep.memory.state = "acquire";
+    if(creep.carry.energy==0){
+        creep.memory.state = "acquire"
+    } else {
+        if(!validSource){
+            if((creep.carry.energy*2)<creep.carryCapacity){
+                creep.memory.state = "acquire";
+            } else {
+                creep.memory.state = "dump";
+            }
+        }
     }
 }
 function buildConstructionSite(creep){
     var target = Game.getObjectById(creep.memory.target);
-    if(target!=undefined){
+    var validSource=false;
+    if(target!=undefined && target!=null && target.progress!=target.progressTotal){
         if(creep.build(target) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
+            validSource=true;
         } else {
-            creep.memory.state = "dump";
+            validSource=true;
         }
     }
-    if(creep.carry.energy==0){ 
-        creep.memory.state = "acquire";
+    if(creep.carry.energy==0){
+        creep.memory.state = "acquire"
+    } else {
+        if(!validSource){
+            if((creep.carry.energy*2)<creep.carryCapacity){
+                creep.memory.state = "acquire";
+            } else {
+                creep.memory.state = "dump";
+            }
+        }
     }
 }
 function repairDamagedStructure(creep){
     var target = Game.getObjectById(creep.memory.target);
-    if(target!=undefined){
+    var validSource=false;
+    if(target!=undefined && target.hits<10000){
         if(creep.repair(target) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
+            validSource=true;
         } else {
-            creep.memory.state = "dump";
+            validSource=true;
         }
     }
-    if(creep.carry.energy==0){ 
-        creep.memory.state = "acquire";
+    if(creep.carry.energy==0){
+        creep.memory.state = "acquire"
+    } else {
+        if(!validSource){
+            if((creep.carry.energy*2)<creep.carryCapacity){
+                creep.memory.state = "acquire";
+            } else {
+                creep.memory.state = "dump";
+            }
+        }
     }
 }
 function dumpInController(creep) {
@@ -248,7 +298,16 @@ function dumpInController(creep) {
             creep.moveTo(creep.room.controller);
         }
     } else {
-        if(creep.body.indexOf(CLAIM)!=-1){
+        //console.log(creep.body.indexOf(CLAIM))
+        var hasClaim=false;
+        for(var i in creep.body){
+            var part = creep.body[i].type;
+            if(part==CLAIM){
+                hasClaim=true;
+                
+            }
+        }
+        if(hasClaim){
             if(creep.room.memory.capture==true){
                 if(creep.claimController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(creep.room.controller);
@@ -293,15 +352,15 @@ function makeBestBody(cap){
     } else if(cap<550){   // 400-549
         body = makeParts(2,2,2)
     } else if(cap<800){   // 550-799
-        body = makeParts(4,3,2)
+        body = makeParts(3,3,3)
     } else if(cap<1300){   // 800-1299
         body = makeParts(5,4,3)
     } else if(cap<1800){   // 1300-1799
-        body = makeParts(6,8,5)
+        body = makeParts(7,6,6)
     } else if(cap<2300){   // 1800-2299
         body = makeParts(8,10,6)
     } else {   // 2300+
-        body = makeParts(8,10,5)
+        body = makeParts(9,10,8)
     }
     return body;
 }
