@@ -14,13 +14,14 @@ var roleScout = {
 	    var creepName="scout"+Game.time+"@"+spawn.room.name+"-"+spawn.room.memory.scoutRoom;
 	    spawn.createCreep( makeParts(6,4,4,0), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
 	},
-	checkScouts: function(spawn){
+	checkScouts: function(myRoom){
+	    myRoom;
 	    //console.log(spawn.room.memory.scoutRoom)
 	    var needScout=false;
-	    if(spawn.room.memory.scoutRoom!=undefined){
+	    if(myRoom.memory.scoutRoom!=undefined){
 	        needScout=true;
-            var scoutRoom=Game.rooms[spawn.room.memory.scoutRoom];
-            if(scoutRoom!=undefined && (scoutRoom.find(FIND_MY_CREEPS).length>0 || spawn.room.memory.numScouts>0)){
+            var scoutRoom=Game.rooms[myRoom.memory.scoutRoom];
+            if(scoutRoom!=undefined && (scoutRoom.find(FIND_MY_CREEPS).length>0 || myRoom.memory.numScouts>0)){
                 needScout=false;
             }
 	    }
@@ -78,7 +79,8 @@ function init(creep) {
     console.log("Initializing Scout - "+creep.name);
     creep.memory.init=true;
     creep.memory.role="scout";
-	creep.memory.scoutRoom=creep.room.memory.scoutRoom;
+    creep.memory.spawnRoom = creep.room.name;
+	creep.memory.scoutRoom = creep.room.memory.scoutRoom;
 	creep.memory.state="traverse"
 }
 module.exports = roleScout;

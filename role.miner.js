@@ -50,11 +50,10 @@ var roleMiner = {
         //*/
         
     },
-    checkMiners: function(spawn){  
-        var myRoom=spawn.room;
+    checkMiners: function(myRoom){  
         var foundMissing=false;
         for(var i in myRoom.memory.minerNames){
-            var thisName=spawn.room.memory.minerNames[i];
+            var thisName=myRoom.memory.minerNames[i];
             var thisCreep=Game.creeps[thisName];
             if(thisCreep==undefined){
                // myRoom.memory.minerIds[i]="";
@@ -214,6 +213,7 @@ function init(creep) {
 	creep.memory.init=true;
 	creep.memory.role="miner";
 	creep.memory.state="enroute";
+	creep.memory.spawnRoom = creep.room.name;
 	if(creep.memory.assignedNode!=undefined){      // set array with your name
 	    for (var i in creep.room.memory.sourceIds){
 	        var src=creep.room.memory.sourceIds[i];

@@ -40,8 +40,7 @@ var roleMover = {
             spawn.createCreep( makeParts(8,10,0), creepName, { role: 'mover', sourceBin: missingBin } );
         }
 	},
-	checkMovers: function(spawn) {
-	    myRoom=spawn.room;
+	checkMovers: function(myRoom) {
     	var foundMissing=false;
         for(var i in myRoom.memory.moverIds){
             var thisId=myRoom.memory.moverIds[i];
@@ -176,7 +175,6 @@ function findDest(creep) {
             destBins.push(destBin);
         }
     }
-    
     //    stuff that really needs energy
     var targets = creep.room.find(FIND_STRUCTURES, {
         filter: (structure) => {
@@ -190,20 +188,30 @@ function findDest(creep) {
         return target;
         
     } else {     //   find a destination bin
+        var foundBin=false;
         if (destBins.length>0){
             var target = creep.pos.findClosestByRange(destBins);
             //console.log(target)
             if (target.store[RESOURCE_ENERGY]==target.storeCapacity){   //  closest bin full find non empty
+                target=undefined;
                 for (var i in creep.room.memory.destBins){
                     target = Game.getObjectById(creep.room.memory.destBins[i]);
                     if ((target.energy<target.energyCapacity)||(target.store<target.storeCapacity)){
                         creep.memory.targetDest=target.id;
+                        foundBin=true;
                         return target;
                     }
                 }
             } else { // closest destination bin not full
                 creep.memory.targetDest=target.id;
+                foundBin=true;
                 return target;
+            }
+        } 
+        if(!foundBin){
+            if(creep.room.name!=creep.memory.spawnRoom){
+                var myRoom=Game.rooms[creep.memory.spawnRoom]
+                voyageOutOfRoom(creep,myRoom);
             }
         }
         
@@ -298,12 +306,13 @@ function makeParts(moves, carries, works) {
 }
 function init(creep) {
     console.log("Initializing Mover - "+creep.name);
-    creep.memory.init=true;
-    creep.memory.role="mover";
+    creep.memory.init = true;
+    creep.memory.role = "mover";
+    creep.memory.spawnRoom = creep.room.name;
 	//creep.memory.sourceBin==undefined;
 	//creep.memory.destBin=undefined;
-	creep.memory.targetSource=undefined;
-    creep.memory.targetDest=undefined;
+	creep.memory.targetSource = undefined;
+    creep.memory.targetDest = undefined;
 	creep.memory.state = "acquireEnergy";
 }
 module.exports = roleMover;

@@ -86,7 +86,7 @@ function acquireEnergy(creep) {
             target = creep.pos.findClosestByRange(targets);
         if(target!=undefined){    // found source bin
             creep.memory.target=target.id;
-            console.log(target.id)
+            //console.log(target.id)
             creep.memory.state = "getFromBin";
             creep.say("fill");
         } else {
@@ -197,31 +197,31 @@ function dumpEnergy(creep) {
     			creep.say('store');
     	} else {
 		    var targets = creep.room.find(FIND_STRUCTURES, {
-    			filter: (structure) => {   return ((structure.hits < structure.hitsMax) && (structure.hits < 5000))	}
+    			filter: (structure) => {   return ((structure.hits < structure.hitsMax) && (structure.hits < 3000))	}
     		});
-        	if (targets.length>0) {                                                     //   3 building low?
+        	if (targets.length>0) {                                                         //   3 building low?
         	    creep.memory.target=creep.pos.findClosestByRange(targets).id;
         		creep.memory.state = "repair";
 			    creep.say('repair');
         	} else {
-        	    var targets = creep.room.find(FIND_STRUCTURES, {
-        			filter: (structure) => {   return ((structure.hits < structure.hitsMax) && (structure.hits < 28000))	}
-        		});
-            	if (targets.length>0) {                                                 //   4 building kina low?
-            	    creep.memory.target=creep.pos.findClosestByRange(targets).id;
-            		creep.memory.state = "repair";
-    			    creep.say('repair');
-            	} else {   
-            	    var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-            		if(targets.length>0) {                                             //  5 building sites?
-            		    creep.memory.target=creep.pos.findClosestByRange(targets).id;
-            			creep.memory.state = "build";
-            			creep.say('build');
-            		} else {
-            	    creep.memory.state = "upgrade";                                     //   6 dump into controller          
-            	    creep.say('upgrade');
-            	}
-        	}
+        	    var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+        		if(targets.length>0) {                                                      //  4 building sites?
+        		    creep.memory.target=creep.pos.findClosestByRange(targets).id;
+        			creep.memory.state = "build";
+        			creep.say('build');
+        		} else {
+        		    var targets = creep.room.find(FIND_STRUCTURES, {
+            			filter: (structure) => {   return ((structure.hits < structure.hitsMax) && (structure.hits < 250000))	}
+            		});
+                	if (targets.length>0) {                                                 //   5 building kina low?
+                	    creep.memory.target=creep.pos.findClosestByRange(targets).id;
+                		creep.memory.state = "repair";
+        			    creep.say('repair');
+                	} else {
+                	    creep.memory.state = "upgrade";                                     //   6 dump into controller          
+            	        creep.say('upgrade');
+                	}
+        		}
     		}
     	}
     }
@@ -276,7 +276,8 @@ function buildConstructionSite(creep){
 function repairDamagedStructure(creep){
     var target = Game.getObjectById(creep.memory.target);
     var validSource=false;
-    if(target!=undefined && target.hits<250000){
+    if(target!=undefined && (target.hits<target.hitsMax) && target.hits<250000){
+       // console.log(creep.repair(target))
         if(creep.repair(target) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
             validSource=true;
@@ -386,6 +387,8 @@ function init(creep) {
     creep.memory.init=true;
     creep.memory.role="drone";
     creep.memory.state="acquire";
+    if(creep.memory.spawnRoom == undefined)
+        creep.memory.spawnRoom = creep.room.name;
     creep.memory.target=undefined
 }
 module.exports = roleDrone;

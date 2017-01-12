@@ -30,8 +30,7 @@ var roleSlave = {
             spawn.createCreep( makeParts(4,4,10), creepName, { role: 'slave' } );
         }
 	},
-	checkSlaves: function(spawn){
-	    var myRoom=spawn.room
+	checkSlaves: function(myRoom){
 	    var foundMissing=false;
 	    if(myRoom.memory.numSlaves<2){
 	        foundMissing=true;

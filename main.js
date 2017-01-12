@@ -103,20 +103,20 @@ function spawnNextUnit(spawn) {
                 roleSlave.makeSlave(spawn);
             } else if(spawn.room.energyAvailable==spawn.room.energyCapacityAvailable) {       //  1 of each + full
                 //console.log("room full")
-                if(roleMiner.checkMiners(spawn)){
+                if(roleMiner.checkMiners(spawn.room)){
                     console.log("spawning miner already have "+spawn.room.memory.numMiners+" in "+spawn.room)
                     roleMiner.makeMiner(spawn);
                 //} else if (roleMover.checkMovers(spawn)){
                 } else if (spawn.room.memory.numMovers<2){
                     console.log("spawning mover already have "+spawn.room.memory.numMovers+" in "+spawn.room)
                     roleMover.makeMover(spawn)
-                }else if (roleSlave.checkSlaves(spawn)){
+                }else if (roleSlave.checkSlaves(spawn.room)){
                     console.log("spawning slave already have "+spawn.room.memory.numSlaves+" in "+spawn.room)
                     roleSlave.makeSlave(spawn)
                 } else if (spawn.room.memory.numDrones<1){
                     console.log("spawning drone in "+spawn.room)
                     roleDrone.makeDrone(spawn)
-                } else if (roleScout.checkScouts(spawn)){
+                } else if (roleScout.checkScouts(spawn.room)){
                     console.log("spawning scout in "+spawn.room)
                     roleScout.makeScout(spawn)
                 }
@@ -127,7 +127,7 @@ function spawnNextUnit(spawn) {
         } else if (spawn.room.memory.numSlaves<1){
             console.log("spawning only slave in "+spawn.room)
             roleSlave.makeSlave(spawn);
-        } else if(spawn.room.energyAvailable==spawn.room.energyCapacityAvailable&&roleDrone.checkDrones(spawn)){
+        } else if(spawn.room.energyAvailable==spawn.room.energyCapacityAvailable&&roleDrone.checkDrones(spawn.room)){
             console.log("spawning drone in "+spawn.room)
             roleDrone.makeDrone(spawn)
         }
