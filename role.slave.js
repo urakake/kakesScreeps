@@ -98,7 +98,7 @@ function findStorage(creep){
     });
     if (targets.length>0){
         var closestBox=creep.room.controller.pos.findClosestByRange(targets);
-        if (creep.room.controller.pos.inRangeTo(closestBox, 7)){
+        if (creep.room.controller.pos.inRangeTo(closestBox, 8)){
             creep.memory.storeBox=closestBox.id;
             foundStorage=true;
             //creep.memory.state = "acquireEnergy";
