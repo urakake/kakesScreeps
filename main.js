@@ -4,9 +4,10 @@
     Game.spawns['Spawn1'].createCreep( [WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,CARRY,CARRY], "miner1", { role: 'miner', assignedNode: '9263077296e02bb' } );
 
  * 				still need to:
- *					force scouts to assist scoutRoom that has drones
- * 					make drones claim controller and repair
- *					spawn a drone in high controller rooms
+ *                  mine adjacent room
+ *                  movers across rooms
+ *                  autoroads
+ *                  
  * by Urakake     **/
   
 var roleDrone = require('role.drone');
@@ -14,7 +15,7 @@ var roleSlave = require('role.slave');
 var roleMiner = require('role.miner');
 var roleMover = require('role.mover');
 var roleScout = require('role.scout');
-var autoBuild = require('mod.autoBuild');
+//var autoBuild = require('mod.autoBuild');
 
 module.exports.loop = function () {
     //delete dead creeps

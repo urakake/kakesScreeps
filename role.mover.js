@@ -23,21 +23,21 @@ var roleMover = {
         console.log("Creating Creep ("+creepName+")");
         spawn.room.memory.creepIter++;
         if(cap<300){ // under 300
-            spawn.createCreep( makeParts(1,1,1), creepName, { role: 'mover', sourceBin: missingBin } );
+            spawn.createCreep( makeParts(1,1,0), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<400){   // 300-399
-            spawn.createCreep( makeParts(2,2,1), creepName, { role: 'mover', sourceBin: missingBin } );
+            spawn.createCreep( makeParts(2,2,0), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<550){   // 400-549
-            spawn.createCreep( makeParts(3,3,1), creepName, { role: 'mover', sourceBin: missingBin } );
+            spawn.createCreep( makeParts(3,3,0), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<800){   // 550-799
-            spawn.createCreep( makeParts(4,5,1), creepName, { role: 'mover', sourceBin: missingBin } );
+            spawn.createCreep( makeParts(4,5,01), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<1300){   // 800-1299
-            spawn.createCreep( makeParts(6,8,1), creepName, { role: 'mover', sourceBin: missingBin } );
+            spawn.createCreep( makeParts(6,8,0), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<1800){   // 1300-1799
-            spawn.createCreep( makeParts(8,10,1), creepName, { role: 'mover', sourceBin: missingBin } );
+            spawn.createCreep( makeParts(8,10,0), creepName, { role: 'mover', sourceBin: missingBin } );
         } else if(cap<2300){   // 1800-2299
-            spawn.createCreep( makeParts(8,10,1), creepName, { role: 'mover', sourceBin: missingBin } );  
+            spawn.createCreep( makeParts(8,10,0), creepName, { role: 'mover', sourceBin: missingBin } );  
         } else {   // 2300+
-            spawn.createCreep( makeParts(8,10,1), creepName, { role: 'mover', sourceBin: missingBin } );
+            spawn.createCreep( makeParts(8,10,0), creepName, { role: 'mover', sourceBin: missingBin } );
         }
 	},
 	checkMovers: function(spawn) {
@@ -211,6 +211,7 @@ function findDest(creep) {
 }
 function findSource(creep) { 
     //console.log('find')
+    creep.memory.pickupFlag=false;
     var sourceBins=[];
     for(var i in creep.room.memory.sourceBins){
         var sourceBin=Game.getObjectById(creep.room.memory.sourceBins[i]);
@@ -221,10 +222,13 @@ function findSource(creep) {
     creep.memory.pickupFlag=false;
     var targets = creep.room.find(FIND_DROPPED_ENERGY)
     if(targets.length){
-        var target = creep.pos.findClosestByRange(targets);
-        creep.memory.targetSource=target.id;
-        creep.memory.pickupFlag=true;
-        return target;
+        var target = creep.pos.findClosestByRange(targets); 
+        //console.log(target.energy)
+        if(target != undefined && target.energy>0){
+            creep.memory.targetSource=target.id;
+            creep.memory.pickupFlag=true;
+            return target;
+        }
     } else {                                            // find source bin  
         var target = creep.pos.findClosestByRange(sourceBins);
         if (target==null){

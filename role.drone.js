@@ -244,18 +244,22 @@ function repairDamagedStructure(creep){
 }
 function dumpInController(creep) {
     if(creep.room.controller.my){
-        if(creep.room.memory.capture==true && creep.body.indexOf(CLAIM)!=-1){
-            if(creep.claimController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller);
-            }
-        } else{
-            if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller);
-            }
-        }      
-    } else {
-        if(creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+        if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
             creep.moveTo(creep.room.controller);
+        }
+    } else {
+        if(creep.body.indexOf(CLAIM)!=-1){
+            if(creep.room.memory.capture==true){
+                if(creep.claimController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(creep.room.controller);
+                }
+            } else {
+                if(creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(creep.room.controller);
+                }
+            }
+        } else {
+            creep.say("!CLAIM")
         }
     }
     if(creep.carry.energy==0)    
