@@ -18,14 +18,14 @@ var roleSlave = {
 	checkSlaves: function(myRoom){
 	    var foundMissing=false;
 	    if(myRoom.memory.numSlaves<1){
-	        var targets = creep.room.find(FIND_STRUCTURES, {
+	        var targets = myRoom.find(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return (structure.structureType == STRUCTURE_STORAGE || structure.structureType == STRUCTURE_LINK || structure.structureType == STRUCTURE_CONTAINER)
                 }
             });
             if (targets.length>0){
-                var closestBox=creep.room.controller.pos.findClosestByRange(targets);
-                if (creep.room.controller.pos.inRangeTo(closestBox, 8)){
+                var closestBox=myRoom.controller.pos.findClosestByRange(targets);
+                if (myRoom.controller.pos.inRangeTo(closestBox, 8)){
                     foundMissing=true;
                 }
             }

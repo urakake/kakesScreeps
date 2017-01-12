@@ -15,15 +15,14 @@ var roleDrone = {
 	    console.log("Creating Creep ("+creepName+")");
 	    spawn.createCreep( makeBestBody(cap), creepName, { role: 'drone' } );
 	},
-	checkDrones: function(spawn){
-	    var myRoom=spawn.room;
+	checkDrones: function(myRoom){
 	    var foundMissing=false;
-        var targets = spawn.room.find(FIND_CONSTRUCTION_SITES);
+        var targets = myRoom.find(FIND_CONSTRUCTION_SITES);
         if (targets.length<2){
             if (myRoom.memory.numDrones<1){
                 var foundMissing=true;
             }
-        } else if (targets.length<4){
+        } else if (targets.length<6){
             if (myRoom.memory.numDrones<1){
                 var foundMissing=true;
             }
@@ -167,7 +166,13 @@ function harvestNode(creep) {
     var validSource=false;
     if(target!=undefined && target.energy>0){
         if(creep.harvest(target) == ERR_NOT_IN_RANGE){
-        	creep.moveTo(target);
+        	if(creep.moveTo(target) == ERR_NO_PATH){
+        	    for(var i in creep.room.memory.sourceIds){
+        	        if(target.id != creep.room.memory.sourceIds[i]){
+        	            creep.memory.target=creep.room.memory.sourceIds[i]
+        	        }
+        	    }
+        	}
         	validSource=true;
         } else {
             validSource=true;
@@ -185,10 +190,24 @@ function harvestNode(creep) {
         }
     }
 }
-function dumpEnergy(creep) {
+function dumpEnergy(creep) {                                                            // 0 cap controller
     creep.memory.target=undefined;
     var target = undefined
-    if (creep.room.controller.ticksToDowngrade<800){                                        //  1 contoller downgrade?
+    if(creep.room.controller==undefined || creep.room.controller.my==undefined){
+        if(creep.room.controller.reservation==undefined || creep.room.controller.reservation.ticksToEnd<800){
+            var hasClaim=false;
+            for(var i in creep.body){
+                var part = creep.body[i].type;
+                if(part==CLAIM){
+                    hasClaim=true;
+                }
+            }
+            if(hasClaim){
+            creep.memory.state = "upgrade";
+            creep.say('upgrade');
+            }
+        }
+    } else if (creep.room.controller.ticksToDowngrade<800){                                        //  1 contoller downgrade?
         creep.memory.state = "upgrade";
         creep.say('upgrade');
     } else {
@@ -204,7 +223,7 @@ function dumpEnergy(creep) {
     			creep.say('store');
     	} else {
 		    var targets = creep.room.find(FIND_STRUCTURES, {
-    			filter: (structure) => {   return ((structure.hits < structure.hitsMax) && (structure.hits < 3000))	}
+    			filter: (structure) => {   return ((structure.hits < structure.hitsMax) && (structure.hits < 2500))	}
     		});
         	if (targets.length>0) {                                                         //   3 building low?
         	    creep.memory.target=creep.pos.findClosestByRange(targets).id;

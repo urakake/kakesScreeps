@@ -12,7 +12,7 @@ var roleScout = {
 	},
 	makeScout: function(spawn){
 	    var creepName="scout"+Game.time+"@"+spawn.room.name+"-"+spawn.room.memory.scoutRoom;
-	    spawn.createCreep( makeParts(5,4,4,1), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
+	    spawn.createCreep( makeParts(5,4,4,2), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
 	},
 	checkScouts: function(myRoom){
 	    var needScout=false;

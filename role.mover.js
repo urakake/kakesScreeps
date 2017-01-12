@@ -37,28 +37,26 @@ function getMissingSourceBinId(thisRoom){
         }
     }
     if(missingNum>=0){                    //  found missing bin
-        if(myRoom.memory.sourceBins.length>=missingNum){
-            myRoom.memory.moverNames.push("");
-        }
         srcId = myRoom.memory.sourceBins[missingNum];
     }  else {
         for (var i in myRoom.memory.miningRooms){    //   look in  mining rooms
             myRoom=Game.rooms[myRoom.memory.miningRooms[i]];
-            for(var i in myRoom.memory.moverNames){
-                var thisName=myRoom.memory.moverNames[i];
-                var thisCreep=Game.creeps[thisName];
-                if(thisCreep==undefined){
-                    myRoom.memory.moverNames[i]="";
-                    missingNum=i;
+            if(myRoom!=undefined){
+                for(var i in myRoom.memory.moverNames){
+                    var thisName=myRoom.memory.moverNames[i];
+                    var thisCreep=Game.creeps[thisName];
+                    if(thisCreep==undefined){
+                        myRoom.memory.moverNames[i]="";
+                        missingNum=i;
+                    }
                 }
-            }
-            if(missingNum>=0){                           //  found missing bin
-                if(myRoom.memory.sourceBins.length>=missingNum){
-                    myRoom.memory.moverNames.push("");
-                }                     
-                return myRoom.memory.sourceBins[missingNum];
+                if(missingNum>=0){                           //  found missing bin
+                    return myRoom.memory.sourceBins[missingNum];
+                } else {
+                    return undefined;
+                }
             } else {
-                return undefined;
+                //mining room undefinedc
             }
         }
     }
@@ -231,11 +229,21 @@ function findDest(creep) {
                 if(target){
                     creep.memory.targetDest=target.id;
                     return target;
+                } else{
+                    var targets = myRoom.find(FIND_STRUCTURES, {
+                        filter: (structure) => {
+                             return (structure.structureType == STRUCTURE_STORAGE)
+                        }
+                    });
+                    if(targets.length){
+                        if(targets[0].store[RESOURCE_ENERGY]<targets[0].storeCapacity){
+                            creep.memory.targetDest=targets[0].id;
+                            return targets[0];  
+                        }
+                    }
                 }
             }
         }
-        
-        
     }
 }
 function findSource(creep) { 
