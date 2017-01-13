@@ -19,6 +19,7 @@ var roleSlave = require('role.slave');
 var roleMiner = require('role.miner');
 var roleMover = require('role.mover');
 var roleScout = require('role.scout');
+var roleGuard = require('role.guard');
 //var autoBuild = require('mod.autoBuild');
 
 module.exports.loop = function () {
@@ -113,6 +114,8 @@ function spawnNextUnit(spawn) {
                     roleSlave.makeSlave(spawn)
                 } else if (roleScout.checkScouts(spawn.room)){
                     roleScout.makeScout(spawn)
+                } else if (roleGuard.checkGuards(spawn.room)){
+                    roleGuard.makeGuard(spawn)
                 } else {
                     var foundMissing=false;
                     for (var i in spawn.room.memory.miningRooms){    //   look in  mining rooms

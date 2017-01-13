@@ -18,7 +18,7 @@ var roleMiner = {
 	            if(missingNode==undefined){
 	                missingNode=getMissingMinerSourceId(Game.rooms[spawn.room.memory.miningRooms[i]])
 	            }
-	        }
+	        } 
 	    }
 	    if(missingNode==undefined){
 	        console.log("spawning broken miner ("+creepName+")");
@@ -27,7 +27,6 @@ var roleMiner = {
 	        console.log("Creating Creep ("+creepName+")");
             return spawn.createCreep( makeBestBody(cap), creepName, { role: 'miner', assignedNode: missingNode } );
 	    }
-        
     },
     checkMiners: function(myRoom){  
         var foundMissing=false;
