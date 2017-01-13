@@ -26,10 +26,13 @@ var roleSlave = {
             if (targets.length>0){
                 var closestBox=myRoom.controller.pos.findClosestByRange(targets);
                 if (myRoom.controller.pos.inRangeTo(closestBox, 8)){
-                    foundMissing=true;
+                    if(closestBox.store[RESOURCE_ENERGY]>0){
+                        foundMissing=true;
+                    }
                 }
             }
 	    }
+	    return foundMissing;
 	}
 };
 
@@ -130,7 +133,7 @@ function makeBestBody(cap){
     } else if(cap<2300){   // 1800-2299
         body = makeParts(4,4,10);
     } else {   // 2300+
-        body = makeParts(4,4,10);
+        body = makeParts(4,4,15);
     }
     return body;
 }
