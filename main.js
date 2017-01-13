@@ -61,6 +61,7 @@ function processRoom(myRoom){
 	    myRoom.memory.numMiners=0;
 	    myRoom.memory.numMovers=0;
 	    myRoom.memory.numScouts=0;
+	    myRoom.memory.numGuards=0
 		//autoBuild.run(roomList[i]);
 	    if(myRoom.memory.scoutRoom!=undefined){
 	        
@@ -92,6 +93,9 @@ function processCreep(creep){
 	}   else if (creep.memory.role=="mover"){
 	    creep.room.memory.numMovers++;
         roleMover.run(creep);
+	}   else if (creep.memory.role=="guard"){
+	    creep.room.memory.numGuards++;
+        roleGuard.run(creep);
 	}
 }
 function spawnNextUnit(spawn) {
@@ -115,8 +119,9 @@ function spawnNextUnit(spawn) {
                 } else if (roleScout.checkScouts(spawn.room)){
                     roleScout.makeScout(spawn)
                 } else if (roleGuard.checkGuards(spawn.room)){
-                    roleGuard.makeGuard(spawn)
-                } else {
+                    roleGuard.makeGuard(spawn) 
+                } 
+                else {
                     var foundMissing=false;
                     for (var i in spawn.room.memory.miningRooms){    //   look in  mining rooms
                         myRoom=Game.rooms[spawn.room.memory.miningRooms[i]];
@@ -190,6 +195,7 @@ function initRoom(myRoom) {
 	myRoom.memory.numMiners=0;
 	myRoom.memory.numMovers=0;
 	myRoom.memory.numScouts=0;
+	myRoom.memory.numGuards=0;
 	var sources = myRoom.find(FIND_SOURCES);
 	var sourceIds=[];
 	var minerNames=[];

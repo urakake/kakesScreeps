@@ -169,7 +169,7 @@ function buildBox(creep){
 }
 function acquireEnergy(creep){
     var targetSource=Game.getObjectById(creep.memory.assignedNode);
-    if(creep.harvest(targetSource) == ERR_NOT_IN_RANGE) {
+    if(creep.harvest(targetSource) == ERR_NOT_IN_RANGE || creep.harvest(targetSource) == ERR_NOT_ENOUGH_RESOURCES) {
         creep.moveTo(targetSource);
     }
     if(creep.carry.energy==creep.carryCapacity || targetSource.energy==0){

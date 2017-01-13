@@ -108,15 +108,17 @@ function acquireEnergy(creep) {
                 creep.memory.state = "harvest";
                 creep.say("harvest");
             } else {
-                if(creep.carry.energy>0)                        // cant find energy
+                if((creep.carry.energy*2)<creep.carryCapacity){
+                    creep.memory.state = "acquire";
+                } else {
                     creep.memory.state = "dump";
-                    creep.say("nothing");
+                }
+                creep.say("no energy");
             }
         }
     }
-    if(creep.memory.state!="dump"||creep.memory.state!="acquire"){
-       // work(creep);
-        
+    if(creep.memory.state!="dump" && creep.memory.state!="acquire"){
+       work(creep);
     }
 }
 function pickupEnergy(creep) {
@@ -250,8 +252,8 @@ function dumpEnergy(creep) {                                                    
     		}
     	}
     }
-    if(creep.memory.state!="dump"||creep.memory.state!="acquire"){
-        //work(creep);
+    if(creep.memory.state!="dump" && creep.memory.state!="acquire"){
+        work(creep);
     }
 }
 function storeForSpawn(creep) {
