@@ -113,6 +113,20 @@ function spawnNextUnit(spawn) {
                     roleSlave.makeSlave(spawn)
                 } else if (roleScout.checkScouts(spawn.room)){
                     roleScout.makeScout(spawn)
+                } else {
+                    var foundMissing=false;
+                    for (var i in spawn.room.memory.miningRooms){    //   look in  mining rooms
+                        myRoom=Game.rooms[spawn.room.memory.miningRooms[i]];
+                        if(myRoom!=undefined && !foundMissing){
+                            if (roleMiner.checkMiners(myRoom)){
+                                foundMissing=true;
+                                roleMiner.makeMiner(spawn);
+                            } else if (roleMover.checkMovers(myRoom)){
+                                roleMover.makeMover(spawn);
+                                foundMissing=true;
+                            }
+                        }
+                    }
                 }
             }
         } else if (spawn.room.memory.numDrone<1){
@@ -182,6 +196,20 @@ function initRoom(myRoom) {
 	}
 	myRoom.memory.sourceIds = sourceIds;
 	myRoom.memory.minerNames = minerNames;
+	var node = Game.getObjectById(creep.memory.assignedNode);
+    var foundStorage=false;
+    var targets = node.room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                 return (structure.structureType == STRUCTURE_STORAGE || structure.structureType == STRUCTURE_LINK || structure.structureType == STRUCTURE_CONTAINER)
+            }
+    });
+    if (targets.length>0){
+        var closestBox=node.pos.findClosestByRange(targets);
+        if (node.pos.inRangeTo(closestBox, 7)){
+            creep.memory.storeBox=closestBox.id;
+            foundStorage=true;
+        }
+    }
 }
 // ------------------------------------------------------------- main --------------------------------------------------------------------------------
 

@@ -20,7 +20,7 @@ var roleScout = {
             var scoutRoom=Game.rooms[myRoom.memory.scoutRoom];
             if(scoutRoom==undefined){
                 needScout=true;
-            }   else if(scoutRoom.memory.numDrones==0){
+            }   else if(scoutRoom.memory.numDrones==0 && myRoom.memory.numScouts==0){
                 needScout=true;
             }
 	    }
@@ -40,11 +40,11 @@ function work(creep) {
 function traverse(creep){
     var targetRoom=creep.memory.scoutRoom;
     //console.log(targetRoom+"  "+creep.memory.scoutRoom)
-    if(creep.room.name != targetRoom){
+    if(creep.room.name == targetRoom){
         if(creep.pos.x<=48 && creep.pos.y<=48 && creep.pos.x>=1 && creep.pos.y>=1){
             becomeDrone(creep);
         } else {
-            creep.moveTo(creep.room.controller.pos);
+            creep.moveTo(creep.room.controller);
         }
         
     } else {

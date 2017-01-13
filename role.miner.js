@@ -13,8 +13,21 @@ var roleMiner = {
         var cap = spawn.room.energyAvailable;
         var creepName = "miner"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
         var missingNode = getMissingMinerSourceId(spawn.room);
-        console.log("Creating Creep ("+creepName+")");
-        return spawn.createCreep( makeBestBody(cap), creepName, { role: 'miner', assignedNode: missingNode } );
+	    if(missingNode==undefined){
+	        for (var i in spawn.room.memory.miningRooms){
+	            if(missingNode==undefined){
+	                missingNode=getMissingMinerSourceId(Game.rooms[spawn.room.memory.miningRooms[i]])
+	            }
+	        }
+	    }
+	    if(missingNode==undefined){
+	        console.log("spawning broken miner ("+creepName+")");
+	        return undefined
+	    } else {
+	        console.log("Creating Creep ("+creepName+")");
+            return spawn.createCreep( makeBestBody(cap), creepName, { role: 'miner', assignedNode: missingNode } );
+	    }
+        
     },
     checkMiners: function(myRoom){  
         var foundMissing=false;
@@ -25,7 +38,7 @@ var roleMiner = {
     }
 };
 function getMissingMinerSourceId(thisRoom){
-    var srcId;
+    var srcId=undefined;
     var myRoom=thisRoom;
     var missingNum=-1;
     //console.log(myRoom.memory.minerNames)
@@ -39,30 +52,6 @@ function getMissingMinerSourceId(thisRoom){
     }
     if(missingNum>=0){                    //  found missing node
         srcId = myRoom.memory.sourceIds[missingNum];
-    }  else {
-        for (var i in myRoom.memory.miningRooms){    //   look in  mining rooms
-            myRoom=Game.rooms[myRoom.memory.miningRooms[i]];
-            if(myRoom!=undefined){
-                for(var i in myRoom.memory.minerNames){
-                    var thisName=myRoom.memory.minerNames[i];
-                    var thisCreep=Game.creeps[thisName];
-                    //console.log(thisCreep)
-                    if(thisCreep==undefined){
-                        myRoom.memory.minerNames[i]="";
-                        missingNum=i;
-                    }
-                }
-                if(missingNum>=0){                           //  found missing node
-                    return myRoom.memory.sourceIds[missingNum];
-                } else {
-                    return undefined;
-                }
-            } else {
-                // cant see room
-                return undefined;
-                // need scount in room first
-            }
-        }
     }
     return srcId;
 }

@@ -13,6 +13,13 @@ var roleMover = {
 	    var cap = spawn.room.energyAvailable;
 	    var creepName = "mover"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
 	    var missingBin = getMissingSourceBinId(spawn.room);
+	    if(missingBin==undefined){
+	        for (var i in spawn.room.memory.miningRooms){
+	            if(missingBin==undefined){
+	                missingBin=getMissingSourceBinId(Game.rooms[spawn.room.memory.miningRooms[i]])
+	            }
+	        }
+	    }
 	    console.log("Creating Creep ("+creepName+")");
 	    return spawn.createCreep( makeBestBody(cap), creepName, { role: 'mover', sourceBin: missingBin } );
 	},
@@ -25,7 +32,7 @@ var roleMover = {
 	}
 };
 function getMissingSourceBinId(thisRoom){
-    var srcId;
+    var srcId=undefined;
     var myRoom=thisRoom;
     var missingNum=-1;
     for(var i in myRoom.memory.moverNames){
@@ -38,29 +45,6 @@ function getMissingSourceBinId(thisRoom){
     }
     if(missingNum>=0){                    //  found missing bin
         srcId = myRoom.memory.sourceBins[missingNum];
-    }  else {
-        for (var i in myRoom.memory.miningRooms){    //   look in  mining rooms
-            myRoom=Game.rooms[myRoom.memory.miningRooms[i]];
-            if(myRoom!=undefined){
-                for(var i in myRoom.memory.moverNames){
-                    var thisName=myRoom.memory.moverNames[i];
-                    var thisCreep=Game.creeps[thisName];
-                    if(thisCreep==undefined){
-                        myRoom.memory.moverNames[i]="";
-                        missingNum=i;
-                    }
-                }
-                if(missingNum>=0){                           //  found missing bin
-                    return myRoom.memory.sourceBins[missingNum];
-                } else {
-                    return undefined;
-                }
-            } else {
-                //cant see mining room need to send scout
-                return undefined;
-                //mining room undefinedc
-            }
-        }
     }
     return srcId;
 }
@@ -139,7 +123,7 @@ function moveToPickup(creep,target) {
                     creep.memory.targetSource=undefined;
                 }
             } else {
-                creep.moveTo(targetSource.room.controller);
+                creep.moveTo(creep.room.controller);
             }
         } else {
             voyageOutOfRoom(creep,target.room)
@@ -149,34 +133,41 @@ function moveToPickup(creep,target) {
     }
 }
 function moveToGetTransfer(creep,target) {
-    if(target.store[RESOURCE_ENERGY]>0){
+    if(target && !containerEmpty(target)){
         if(creep.room.name==target.room.name){
-            if(target.transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            if(creep.pos.x<=48 && creep.pos.y<=48 && creep.pos.x>=1 && creep.pos.y>=1){
+                if(target.transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target);
+                } else {
+                    creep.memory.targetSource=undefined;
+                }
             } else {
-                creep.memory.targetSource=undefined;
+                creep.moveTo(creep.room.controller);
             }
         } else {
             voyageOutOfRoom(creep,target.room)
         }
-        
     } else {
         creep.memory.targetSource=undefined;
     }
 }
 function moveToGiveTransfer(creep,target) {
-    if(!containerAtCap(target)){
+    if(target && !containerAtCap(target)){
         if(creep.room.name==target.room.name){
-            if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            if(creep.pos.x<=48 && creep.pos.y<=48 && creep.pos.x>=1 && creep.pos.y>=1){
+                if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target);
+                } else {
+                    creep.memory.targetSource=undefined;
+                }
             } else {
-                creep.memory.targetDest=undefined;
+                creep.moveTo(creep.room.controller);
             }
         } else {
             voyageOutOfRoom(creep,target.room)
         }
     } else {
-        findDest(creep);
+        creep.memory.targetSource=undefined;
     }
 }
 function findDest(creep) {
