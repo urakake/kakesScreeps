@@ -22,7 +22,7 @@ var roleMover = {
 	    }
 	    if(Game.getObjectById(missingBin)!=undefined){
 	        console.log("Creating Creep ("+creepName+")");
-	        //return spawn.createCreep( makeBestBody(cap), creepName, { role: 'mover', sourceBin: missingBin } );
+	        return spawn.createCreep( makeBestBody(cap), creepName, { role: 'mover', sourceBin: missingBin } );
 	    } else {
 	        console.log("undefined src bin for mover")
 	    }

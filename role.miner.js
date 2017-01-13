@@ -116,7 +116,7 @@ function findStorage(creep){
             }
             if(!storageSaved){
                 var srcBins=[]
-                var minerNames=[]
+                var moverNames=[]
                 for(var i in creep.room.memory.sourceBins){
                     var bin = Game.getObjectById(creep.room.memory.sourceBins[i])
                     if(bin!=undefined){
@@ -154,7 +154,7 @@ function findStorage(creep){
             }
             if(!storageSaved){
                 var srcBins=[]
-                var minerNames=[]
+                var moverNames=[]
                 for(var i in creep.room.memory.sourceBins){
                     var bin = Game.getObjectById(creep.room.memory.sourceBins[i])
                     if(bin!=undefined){
