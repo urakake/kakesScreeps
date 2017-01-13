@@ -20,8 +20,13 @@ var roleMover = {
 	            }
 	        }
 	    }
-	    console.log("Creating Creep ("+creepName+")");
-	    return spawn.createCreep( makeBestBody(cap), creepName, { role: 'mover', sourceBin: missingBin } );
+	    if(Game.getObjectById(missingBin)!=undefined){
+	        console.log("Creating Creep ("+creepName+")");
+	        //return spawn.createCreep( makeBestBody(cap), creepName, { role: 'mover', sourceBin: missingBin } );
+	    } else {
+	        console.log("undefined src bin for mover")
+	    }
+	    
 	},
 	checkMovers: function(myRoom) {
     	var foundMissing=false;

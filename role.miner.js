@@ -115,8 +115,21 @@ function findStorage(creep){
                 }
             }
             if(!storageSaved){
-                creep.room.memory.sourceBins.push(creep.memory.storeBox);
-                creep.room.memory.moverNames.push("");
+                var srcBins=[]
+                var minerNames=[]
+                for(var i in creep.room.memory.sourceBins){
+                    var bin = Game.getObjectById(creep.room.memory.sourceBins[i])
+                    if(bin!=undefined){
+                        srcBins.push(bin.id);
+                        moverNames.push(creep.room.memory.moverNames[i]);
+                    }
+                }
+                if(closestBox!=undefined){
+                        srcBins.push(closestBox.id);
+                        moverNames.push("");
+                }
+                creep.room.memory.sourceBins = srcBins;
+                creep.room.memory.moverNames = moverNames;
             }
         }
     }
@@ -132,6 +145,27 @@ function findStorage(creep){
                 creep.memory.storeBox=closestBox.id;
                 foundStorage=true;
                 creep.memory.state = "buildBox"
+            }
+            var storageSaved=false;
+            for (var i in creep.room.memory.sourceBins){
+                if(creep.room.memory.sourceBins[i]==creep.memory.storeBox){
+                    storageSaved=true
+                }
+            }
+            if(!storageSaved){
+                var srcBins=[]
+                var minerNames=[]
+                for(var i in creep.room.memory.sourceBins){
+                    var bin = Game.getObjectById(creep.room.memory.sourceBins[i])
+                    if(bin!=undefined){
+                        srcBins.push(bin.id);
+                        moverNames.push(creep.room.memory.moverNames[i]);
+                    }
+                }
+                if(closestBox!=undefined){
+                        srcBins.push(closestBox.id);
+                        moverNames.push("");
+                }
             }
         }
     } if(!foundStorage){

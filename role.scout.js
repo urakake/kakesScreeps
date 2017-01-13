@@ -13,13 +13,16 @@ var roleScout = {
 	makeScout: function(spawn){
 	    var creepName="scout"+Game.time+"@"+spawn.room.name+"-"+spawn.room.memory.scoutRoom;
 	    var scoutRoom=Game.rooms[spawn.room.memory.scoutRoom]
-	    var targets = scoutRoom.find(FIND_CONSTRUCTION_SITES);
-	    if (targets < 1){
-	        spawn.createCreep( makeParts(5,5,5,0), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
+	    if(scoutRoom==undefined){
+	        return spawn.createCreep( makeParts(2,2,2,0), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
 	    } else {
-	        spawn.createCreep( makeParts(5,4,4,1), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
+	        var targets = scoutRoom.find(FIND_CONSTRUCTION_SITES);
+    	    if (targets > 1){
+    	        return spawn.createCreep( makeParts(5,5,5,0), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
+    	    } else {
+    	        return spawn.createCreep( makeParts(5,4,4,2), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
+    	    }
 	    }
-	    
 	},
 	checkScouts: function(myRoom){
 	    var needScout=false;

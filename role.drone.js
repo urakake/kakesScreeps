@@ -118,7 +118,7 @@ function acquireEnergy(creep) {
         }
     }
     if(creep.memory.state!="dump" && creep.memory.state!="acquire"){
-       work(creep);
+       //work(creep);
     }
 }
 function pickupEnergy(creep) {
@@ -253,7 +253,7 @@ function dumpEnergy(creep) {                                                    
     	}
     }
     if(creep.memory.state!="dump" && creep.memory.state!="acquire"){
-        work(creep);
+        //work(creep);
     }
 }
 function storeForSpawn(creep) {

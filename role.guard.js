@@ -83,6 +83,7 @@ function attackInvaderScum(creep) {
    var targets = creep.room.find(FIND_HOSTILE_CREEPS);
    if(targets.length>0){
        var target = creep.pos.findClosestByRange(targets);
+       console.log("attacking "+target.name)
        if(creep.attack(target)==ERR_NOT_IN_RANGE){
            creep.moveTo(target);
        }

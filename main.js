@@ -137,7 +137,7 @@ function spawnNextUnit(spawn) {
                     }
                 }
             }
-        } else if (spawn.room.memory.numDrone<1){
+        } else if (spawn.room.memory.numDrones<1){
             roleDrone.makeDrone(spawn);
         } else if(spawn.room.energyAvailable==spawn.room.energyCapacityAvailable && (spawn.room.memory.numDrone<3)){
             roleDrone.makeDrone(spawn);
