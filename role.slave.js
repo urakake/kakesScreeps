@@ -123,13 +123,13 @@ function makeBestBody(cap){
     if(cap<300){   // under 300
         body =  makeParts(1,1,1);
     } else if(cap<550){   // 300-549
-        body =  makeParts(2,2,1);
+        body =  makeParts(1,1,2);
     } else if(cap<800){   // 550-799
-        body =  makeParts(2,4,2);
+        body =  makeParts(2,1,4);
     } else if(cap<1300){   // 800-1299
-        body =  makeParts(4,4,4);
+        body =  makeParts(1,1,7);
     } else if(cap<1800){   // 1300-1799
-        body = makeParts(4,4,8);
+        body = makeParts(4,2,10);
     } else if(cap<2300){   // 1800-2299
         body = makeParts(4,4,10);
     } else {   // 2300+
