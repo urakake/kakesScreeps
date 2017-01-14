@@ -139,7 +139,7 @@ function spawnNextUnit(spawn) {
             }
         } else if (spawn.room.memory.numDrones<1){
             roleDrone.makeDrone(spawn);
-        } else if(spawn.room.energyAvailable==spawn.room.energyCapacityAvailable && (spawn.room.memory.numDrone<3)){
+        } else if(spawn.room.energyAvailable==spawn.room.energyCapacityAvailable && (spawn.room.memory.numDrones<3)){
             roleDrone.makeDrone(spawn);
         }
     }
@@ -205,20 +205,7 @@ function initRoom(myRoom) {
 	}
 	myRoom.memory.sourceIds = sourceIds;
 	myRoom.memory.minerNames = minerNames;
-	var node = Game.getObjectById(creep.memory.assignedNode);
-    var foundStorage=false;
-    var targets = node.room.find(FIND_STRUCTURES, {
-            filter: (structure) => {
-                 return (structure.structureType == STRUCTURE_STORAGE || structure.structureType == STRUCTURE_LINK || structure.structureType == STRUCTURE_CONTAINER)
-            }
-    });
-    if (targets.length>0){
-        var closestBox=node.pos.findClosestByRange(targets);
-        if (node.pos.inRangeTo(closestBox, 7)){
-            creep.memory.storeBox=closestBox.id;
-            foundStorage=true;
-        }
-    }
+
 }
 // ------------------------------------------------------------- main --------------------------------------------------------------------------------
 

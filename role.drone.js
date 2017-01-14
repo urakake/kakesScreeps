@@ -384,7 +384,7 @@ function makeBestBody(cap){
     } else if(cap<550){   // 400-549
         body = makeParts(2,2,2)
     } else if(cap<800){   // 550-799
-        body = makeParts(3,3,3)
+        body = makeParts(3,4,2)
     } else if(cap<1300){   // 800-1299
         body = makeParts(5,4,3)
     } else if(cap<1800){   // 1300-1799
