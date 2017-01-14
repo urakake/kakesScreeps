@@ -8,7 +8,7 @@ var roleGuard = {
             init(creep);
         }
         work(creep);
-	},
+	}, 
 	makeGuard: function(spawn){
 	    var cap = spawn.room.energyAvailable;
 	    var creepName="guard"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
