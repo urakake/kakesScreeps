@@ -8,7 +8,7 @@
     Game.rooms['W8N2'].memory.capture = true;
 
  * 				still need to:
- *                  
+ *                  link github lulz
  *                  
  *                  autoroads
  *                  
