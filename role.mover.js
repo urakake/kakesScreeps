@@ -100,7 +100,8 @@ function dumpEnergy(creep) {
             }  
         }
     } else {                                        // yes bin
-        target = Game.getObjectById(creep.memory.destBin);
+        //target = Game.getObjectById(creep.memory.destBin);
+        target = findDest(creep);
     }
     if(target){
         moveToGiveTransfer(creep,target);
