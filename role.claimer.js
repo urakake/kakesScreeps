@@ -104,8 +104,7 @@ function init(creep) {
     creep.memory.init=true;
     creep.memory.role="claimer";
     creep.memory.state="walkToRoom";
-    if(creep.memory.spawnRoom == undefined)
-        creep.memory.spawnRoom = creep.room.name;
+    creep.memory.spawnRoom = creep.room.name;
     if(creep.memory.targetRoom!=undefined){      // set array with your name
 	    var targetRoom = Game.rooms[creep.memory.targetRoom];
 	    targetRoom.memory.claimerName=creep.name;

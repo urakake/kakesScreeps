@@ -11,33 +11,36 @@ var roleScout = {
         work(creep);
 	},
 	makeScout: function(spawn){
-	    var creepName="scout"+Game.time+"@"+spawn.room.name+"-"+spawn.room.memory.scoutRoom;
-	    var scoutRoom=Game.rooms[spawn.room.memory.scoutRoom]
-	    if(scoutRoom==undefined){
-	        return spawn.createCreep( makeParts(2,2,2), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
-	    } else {
-	        var targets = scoutRoom.find(FIND_CONSTRUCTION_SITES);
-    	    if (targets > 1){
-    	        return spawn.createCreep( makeParts(5,5,5), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
-    	    } else {
-    	        return spawn.createCreep( makeParts(5,4,4), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
-    	    }
+	    var cap = spawn.room.energyAvailable;
+	    var creepName="scout"+Game.time+"@"+spawn.room.name+"-"+spawn.room.memory.scoutRoom+"@"+spawn.name;
+	    var missingRoom = getMissingScoutRoom(spawn.room);
+	    console.log("Creating Creep ("+creepName+")");
+	    if(missingRoom!=undefined){
+	        return spawn.createCreep( makeBestBody(cap), creepName, { role: 'scout', targetRoom: missingRoom } );
 	    }
 	},
 	checkScouts: function(myRoom){
-	    var needScout=false;
-	    if(myRoom.memory.scoutRoom!=undefined){
-            var scoutRoom=Game.rooms[myRoom.memory.scoutRoom];
-            if(scoutRoom==undefined){
-                needScout=true;
-            }   else if(scoutRoom.memory.numDrones==0 && myRoom.memory.numScouts==0 && scoutRoom.memory.numScouts==0){
-                needScout=true;
-            }
-	    }
-	    return needScout;
+	    var foundMissing=false;
+        if(getMissingScoutRoom(myRoom)!=undefined){
+            foundMissing=true
+        }
+        return foundMissing;
 	}
 };
-
+function getMissingScoutRoom(myRoom){
+    var nameOfRoom=undefined;
+    for(var i in myRoom.memory.miningRooms){
+        var thisRoom = Game.rooms[myRoom.memory.miningRooms[i]];
+        if(thisRoom){
+            var thisCreep = Game.creeps[thisRoom.memory.scoutName];
+            if(thisCreep==undefined){
+                thisRoom.memory.scoutName="";
+                nameOfRoom = thisRoom.name;
+            }
+        }
+    }
+    return nameOfRoom;
+}
 function work(creep) {
 	if(creep.memory.state == "traverse") {
 	    traverse(creep);
@@ -48,7 +51,7 @@ function work(creep) {
 }
 
 function traverse(creep){
-    var targetRoom=creep.memory.scoutRoom;
+    var targetRoom=creep.memory.targetRoom;
     //console.log(targetRoom+"  "+creep.memory.scoutRoom)
     if(creep.room.name == targetRoom){
         if(creep.pos.x<=48 && creep.pos.y<=48 && creep.pos.x>=1 && creep.pos.y>=1){
@@ -71,6 +74,27 @@ function becomeDrone(creep){
     creep.memory.role="drone";
     creep.memory.init=false;
 }
+function makeBestBody(cap){
+    var body = [];
+    if(cap<300){   // under 300
+        body = makeParts(1,1,1)
+    } else if(cap<400){   // 300-399
+        body = makeParts(2,2,1)
+    } else if(cap<550){   // 400-549
+        body = makeParts(2,2,2)
+    } else if(cap<800){   // 550-799
+        body = makeParts(3,3,3) 
+    } else if(cap<1300){   // 800-1299
+        body = makeParts(4,4,4)
+    } else if(cap<1800){   // 1300-1799
+        body = makeParts(4,4,4)
+    } else if(cap<2300){   // 1800-2299
+        body = makeParts(4,4,4)
+    } else {   // 2300+
+        body = makeParts(4,4,4)
+    }
+    return body;
+}
 function makeParts(moves, carries, works) {
     var list = [];
     for(var i=0;i<moves;i++){
@@ -84,14 +108,18 @@ function makeParts(moves, carries, works) {
     }
     return list;
 }
-
 function init(creep) {
     console.log("Initializing Scout - "+creep.name);
     creep.memory.init=true;
     creep.memory.role="scout";
+    creep.memory.state="traverse"
     creep.memory.spawnRoom = creep.room.name;
-	creep.memory.scoutRoom = creep.room.memory.scoutRoom;
-	creep.memory.state="traverse"
+	if(creep.memory.targetRoom!=undefined){      // set array with your name
+	    var targetRoom = Game.rooms[creep.memory.targetRoom];
+	    targetRoom.memory.scoutName=creep.name;
+	} else {
+	    console.log("spawning scout with no target")
+	}
 }
 module.exports = roleScout;
 // -------------------------------------------------------------- role.scout --------------------------------------------------------------------

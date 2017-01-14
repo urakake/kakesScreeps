@@ -14,7 +14,11 @@ var roleGuard = {
 	    var creepName="guard"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
 	    var missingRoom = getMissingGuardRoom(spawn.room);
 	    console.log("Creating Creep ("+creepName+")");
-	    return spawn.createCreep( makeBestBody(cap), creepName, { role: 'guard', stationRoom: missingRoom } );
+	    if(missingRoom!=undefined){
+	        return spawn.createCreep( makeBestBody(cap), creepName, { role: 'guard', targetRoom: missingRoom } );
+	    } else {
+	        
+	    }
 	},
 	checkGuards: function(myRoom){
 	    var foundMissing=false;
@@ -29,9 +33,9 @@ function getMissingGuardRoom(myRoom){
     for(var i in myRoom.memory.miningRooms){
         var thisRoom = Game.rooms[myRoom.memory.miningRooms[i]];
         if(thisRoom){
-            var thisCreep = Game.creeps[thisRoom.memory.guardCreep];
+            var thisCreep = Game.creeps[thisRoom.memory.guardName];
             if(thisCreep==undefined){
-                thisRoom.memory.guardCreep="";
+                thisRoom.memory.guardName="";
                 nameOfRoom = thisRoom.name;
             }
         }
@@ -54,7 +58,7 @@ function work(creep) {
     }
 }
 function walkToRoom(creep) {
-    var targetRoom=creep.memory.stationRoom;
+    var targetRoom=creep.memory.targetRoom;
     //console.log(targetRoom+"  "+creep.memory.scoutRoom)
     if(creep.room.name == targetRoom){
         if(creep.pos.x<=48 && creep.pos.y<=48 && creep.pos.x>=1 && creep.pos.y>=1){
@@ -134,11 +138,10 @@ function init(creep) {
     creep.memory.init=true;
     creep.memory.role="guard";
     creep.memory.state="walkToRoom";
-    if(creep.memory.spawnRoom == undefined)
-        creep.memory.spawnRoom = creep.room.name;
-    if(creep.memory.stationRoom!=undefined){      // set array with your name
-	    var stationRoom = Game.rooms[creep.memory.stationRoom];
-	    stationRoom.memory.guardCreep=creep.name;
+    creep.memory.spawnRoom = creep.room.name;
+    if(creep.memory.targetRoom!=undefined){      // set array with your name
+	    var targetRoom = Game.rooms[creep.memory.targetRoom];
+	    targetRoom.memory.guardName=creep.name;
 	} else {
 	    console.log("spawning guard with no target")
 	}
