@@ -14,13 +14,13 @@ var roleScout = {
 	    var creepName="scout"+Game.time+"@"+spawn.room.name+"-"+spawn.room.memory.scoutRoom;
 	    var scoutRoom=Game.rooms[spawn.room.memory.scoutRoom]
 	    if(scoutRoom==undefined){
-	        return spawn.createCreep( makeParts(2,2,2,0), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
+	        return spawn.createCreep( makeParts(2,2,2), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
 	    } else {
 	        var targets = scoutRoom.find(FIND_CONSTRUCTION_SITES);
     	    if (targets > 1){
-    	        return spawn.createCreep( makeParts(5,5,5,0), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
+    	        return spawn.createCreep( makeParts(5,5,5), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
     	    } else {
-    	        return spawn.createCreep( makeParts(5,4,4,2), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
+    	        return spawn.createCreep( makeParts(5,4,4), creepName, { role: 'scout', scoutRoom: spawn.room.memory.scoutRoom  } );
     	    }
 	    }
 	},
@@ -71,7 +71,7 @@ function becomeDrone(creep){
     creep.memory.role="drone";
     creep.memory.init=false;
 }
-function makeParts(moves, carries, works, claims) {
+function makeParts(moves, carries, works) {
     var list = [];
     for(var i=0;i<moves;i++){
         list.push(MOVE);
@@ -81,9 +81,6 @@ function makeParts(moves, carries, works, claims) {
     }
     for(var i=0;i<works;i++){
         list.push(WORK);
-    }
-    for(var i=0;i<claims;i++){
-        list.push(CLAIM);
     }
     return list;
 }

@@ -103,8 +103,9 @@ function spawnNextUnit(spawn) {
                     roleScout.makeScout(spawn)
                 } else if (roleGuard.checkGuards(spawn.room)){
                     roleGuard.makeGuard(spawn) 
-                } 
-                else {
+                } else if (roleClaimer.checkClaimers(spawn.room)){
+                    roleClaimer.makeClaimer(spawn)
+                } else {
                     var foundMissing=false;
                     for (var i in spawn.room.memory.miningRooms){    //   look in  mining rooms
                         myRoom=Game.rooms[spawn.room.memory.miningRooms[i]];

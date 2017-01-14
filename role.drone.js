@@ -192,22 +192,10 @@ function harvestNode(creep) {
         }
     }
 }
-function dumpEnergy(creep) {                                                            // 0 cap controller
+function dumpEnergy(creep) {                                                            
     creep.memory.target=undefined;
     var target = undefined
-    if((creep.room.controller==undefined || creep.room.controller.my==undefined) && (creep.room.controller.reservation==undefined || creep.room.controller.reservation.ticksToEnd<800)){
-        var hasClaim=false;
-        for(var i in creep.body){
-            var part = creep.body[i].type;
-            if(part==CLAIM){
-                hasClaim=true;
-            }
-        }
-        if(hasClaim){
-        //creep.memory.state = "upgrade";
-        //creep.say('upgrade');
-        }
-    } else if (creep.room.controller.ticksToDowngrade<800){                                        //  1 contoller downgrade?
+    if (creep.room.controller.ticksToDowngrade<800){                                        //  1 contoller downgrade?
         creep.memory.state = "upgrade";
         creep.say('upgrade');
     } 
@@ -350,7 +338,7 @@ function dumpInController(creep) {
                 }
             }
         } else {
-            creep.say("!CLAIM")
+            creep.say("bored")
         }
     }
     if(creep.carry.energy==0)    

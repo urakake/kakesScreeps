@@ -85,6 +85,7 @@ function clearCounts(myRoom){
     myRoom.memory.numMovers=0;
     myRoom.memory.numScouts=0;
     myRoom.memory.numSlaves=0;
+    myRoom.memory.numClaimers=0;
     myRoom.memory.sourceIter=0;
 }
 function initRoom(myRoom) {

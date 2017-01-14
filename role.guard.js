@@ -13,7 +13,6 @@ var roleGuard = {
 	    var cap = spawn.room.energyAvailable;
 	    var creepName="guard"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
 	    var missingRoom = getMissingGuardRoom(spawn.room);
-	    
 	    console.log("Creating Creep ("+creepName+")");
 	    return spawn.createCreep( makeBestBody(cap), creepName, { role: 'guard', stationRoom: missingRoom } );
 	},
@@ -23,9 +22,6 @@ var roleGuard = {
             foundMissing=true
         }
         return foundMissing;
-        if(myRoom.memory.numGuards==0){
-            myRoom.memory.numGuards=0;
-        }
 	}
 };
 function getMissingGuardRoom(myRoom){
