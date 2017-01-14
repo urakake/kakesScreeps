@@ -83,7 +83,7 @@ function spawnCreeps(myRoom){
 }
 function spawnNextUnit(spawn) {
     if(!spawn.spawning && spawn.room.energyAvailable>=200){
-        if(spawn.room.controller.level>=2){
+        if(spawn.room.controller.level >= 2){
             if (spawn.room.memory.numDrones<1){
                 roleDrone.makeDrone(spawn);
             } else if (spawn.room.memory.numMiners<1){
