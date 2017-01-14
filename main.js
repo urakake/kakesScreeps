@@ -8,32 +8,28 @@
     Game.rooms['W8N2'].memory.capture = true;
 
  * 				still need to:
- *                  mine adjacent room
- *                  movers across rooms
+ *                  
+ *                  
  *                  autoroads
  *                  
  * by Urakake     **/
   
+var roleRoom = require('role.room');
 var roleDrone = require('role.drone');
 var roleSlave = require('role.slave');
 var roleMiner = require('role.miner');
 var roleMover = require('role.mover');
 var roleScout = require('role.scout');
 var roleGuard = require('role.guard');
+var roleClaimer = require('role.claimer');
 //var autoBuild = require('mod.autoBuild');
 
 module.exports.loop = function () {
-    //delete dead creeps
-    for(var i in Memory.creeps) {
-        if(!Game.creeps[i]) {
-            delete Memory.creeps[i];
-        } 
-    }
+    removeDeadCreeps();
 	var roomList = Game.rooms;   
-	// room management
+	// process room
 	for(var i in roomList){
-	    var myRoom=roomList[i];
-		processRoom(myRoom)
+		roleRoom.run(roomList[i])
 	}
 	// run thru creeps
     for(var i in Game.creeps) {
@@ -43,39 +39,16 @@ module.exports.loop = function () {
     }
     // spawn missing creeps
     for(var i in roomList){
-		var thisSpawn; 
-		for(var j in Game.spawns) {
-			if (Game.spawns[j].room==roomList[i]){
-				thisSpawn=Game.spawns[j];
-			}
-		}
-        if (thisSpawn && thisSpawn.structureType==STRUCTURE_SPAWN && !thisSpawn.spawning){
-            spawnNextUnit(thisSpawn);
-		}
+	    spawnCreeps(roomList[i])
 	}
 }
-function processRoom(myRoom){
-        if (!myRoom.memory.init){   initRoom(myRoom);  }
-		myRoom.memory.numDrones=0;
-	    myRoom.memory.numSlaves=0;
-	    myRoom.memory.numMiners=0;
-	    myRoom.memory.numMovers=0;
-	    myRoom.memory.numScouts=0;
-	    myRoom.memory.numGuards=0
-		//autoBuild.run(roomList[i]);
-	    if(myRoom.memory.scoutRoom!=undefined){
-	        
-	    }
-	    if(myRoom.memory.newSourceId!=undefined){
-	        myRoom.memory.sourceIds.push(myRoom.memory.newSourceId);
-	        myRoom.memory.minerNames.push("")
-	    }
-	    if(myRoom.memory.newSourceBin!=undefined){
-	        myRoom.memory.sourceBins.push(myRoom.memory.newSourceBin);
-	        myRoom.memory.moverNames.push("")
-	    }
-	    
-		workTowers(myRoom);
+function removeDeadCreeps(){
+    //delete dead creeps
+    for(var i in Memory.creeps) {
+        if(!Game.creeps[i]) {
+            delete Memory.creeps[i];
+        } 
+    }
 }
 function processCreep(creep){
     if (creep.memory.role=="drone"){ 
@@ -84,19 +57,29 @@ function processCreep(creep){
     } else if (creep.memory.role=="slave"){
 		creep.room.memory.numSlaves++;
         roleSlave.run(creep);
-	}  else if (creep.memory.role=="miner"){
+	} else if (creep.memory.role=="miner"){
 	    creep.room.memory.numMiners++;
         roleMiner.run(creep);
-	}  else if (creep.memory.role=="scout"){
+	} else if (creep.memory.role=="scout"){
 	    creep.room.memory.numScouts++;
         roleScout.run(creep);
-	}   else if (creep.memory.role=="mover"){
+	} else if (creep.memory.role=="mover"){
 	    creep.room.memory.numMovers++;
         roleMover.run(creep);
-	}   else if (creep.memory.role=="guard"){
+	} else if (creep.memory.role=="guard"){
 	    creep.room.memory.numGuards++;
         roleGuard.run(creep);
+	} else if (creep.memory.role=="claimer"){
+	    creep.room.memory.numClaimers++;
+        roleClaimer.run(creep);
 	}
+}
+function spawnCreeps(myRoom){
+    var mySpawns = myRoom.find(FIND_MY_SPAWNS)
+    var cap = myRoom.energyAvailable;
+    for(var i in mySpawns){
+        spawnNextUnit(mySpawns[i]);
+    }
 }
 function spawnNextUnit(spawn) {
     if(!spawn.spawning && spawn.room.energyAvailable>=200){
@@ -143,69 +126,6 @@ function spawnNextUnit(spawn) {
             roleDrone.makeDrone(spawn);
         }
     }
-}
-function workTowers(myRoom) {
-	var targets = myRoom.find(FIND_MY_STRUCTURES, {
-			filter: (structure) => {
-				return (structure.structureType == STRUCTURE_TOWER)
-			}
-	});
-	for (var i in targets) {
-		var tower = targets[i];
-		if(tower) {
-		    var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-            if(closestHostile) {
-                tower.attack(closestHostile);
-            } else if (tower.energy>tower.energyCapacity*.7) {
-                
-               var damagedStructures = tower.room.find(FIND_STRUCTURES, {
-						filter: (structure) => {
-							return ((structure.hits < structure.hitsMax) && (structure.hits < 250000))
-						}
-					});
-				if (damagedStructures) {
-					var LowHP = 100000000000;
-					var LowID = null;
-					for (var j in damagedStructures) {
-						if (damagedStructures[j].hits < LowHP) {
-						    if(tower.pos.inRangeTo(damagedStructures[j], 20)){
-						        LowID = damagedStructures[j]
-							    LowHP = damagedStructures[j].hits
-						    }
-						}
-					}
-					if (LowID != null ) {
-						tower.repair(LowID);
-					}
-				}
-            }
-		}
-	}
-}
-function initRoom(myRoom) {
-    console.log("Initializing Room ("+myRoom.name+")");
-    myRoom.memory.init=true;
-	myRoom.memory.sourceBins=[];
-	myRoom.memory.minerNames=[];
-	myRoom.memory.destBins=[];
-	myRoom.memory.moverNames=[];
-	myRoom.memory.sourceIter=0;
-	myRoom.memory.numDrones=0;
-	myRoom.memory.numSlaves=0;
-	myRoom.memory.numMiners=0;
-	myRoom.memory.numMovers=0;
-	myRoom.memory.numScouts=0;
-	myRoom.memory.numGuards=0;
-	var sources = myRoom.find(FIND_SOURCES);
-	var sourceIds=[];
-	var minerNames=[];
-	for (var j in sources){
-	    sourceIds.push(sources[j].id);
-	    minerNames.push("");
-	}
-	myRoom.memory.sourceIds = sourceIds;
-	myRoom.memory.minerNames = minerNames;
-
 }
 // ------------------------------------------------------------- main --------------------------------------------------------------------------------
 

@@ -30,7 +30,7 @@ var roleScout = {
             var scoutRoom=Game.rooms[myRoom.memory.scoutRoom];
             if(scoutRoom==undefined){
                 needScout=true;
-            }   else if(scoutRoom.memory.numDrones==0 && myRoom.memory.numScouts==0){
+            }   else if(scoutRoom.memory.numDrones==0 && myRoom.memory.numScouts==0 && scoutRoom.memory.numScouts==0){
                 needScout=true;
             }
 	    }
