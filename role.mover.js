@@ -339,7 +339,7 @@ function makeBestBody(cap){
     } else if(cap<2300){   // 1800-2299
         body = makeParts(7,14,0)
     } else {   // 2300+
-        body = makeParts(8,16,0)
+        body = makeParts(10,20,0)
     }
     return body;
 }

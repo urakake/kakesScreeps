@@ -116,6 +116,8 @@ function pickupFromBin(creep){
     //console.log(target)
     if(target.transfer(creep, RESOURCE_ENERGY) < 0) {
         creep.moveTo(target);
+    } else {
+        creep.memory.state = "dumpEnergy";
     }
 }
 function makeBestBody(cap){
