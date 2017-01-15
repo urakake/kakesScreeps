@@ -3,7 +3,8 @@
     Game.spawns['Spawn1'].createCreep( [WORK,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY], "moverTest", { role: 'mover' } )
     Game.spawns['Spawn1'].createCreep( [WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,CARRY,CARRY], "miner1", { role: 'miner', assignedNode: '9263077296e02bb' } );
 
-    Game.rooms['spawnRoom'].memory.miningRooms = ['neighborToMine'];
+    Game.rooms['W2N2'].memory.miningRooms = ['W2N1'];
+    Game.rooms['W8N2'].memory.init = false;
     Game.rooms['W8N3'].memory.miningRooms.push('W8N2');
     Game.rooms['W8N3'].memory.scoutRoom = 'W8N2';
     Game.rooms['W8N2'].memory.capture = true;
