@@ -11,7 +11,7 @@ var roleGuard = {
 	}, 
 	makeGuard: function(spawn){
 	    var cap = spawn.room.energyAvailable;
-	    var creepName="guard"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
+	    var creepName="guard@"+spawn.room.name+"@"+spawn.name+"@"+Game.time;
 	    var missingRoom = getMissingGuardRoom(spawn.room);
 	    console.log("Creating Creep ("+creepName+")");
 	    if(missingRoom!=undefined){

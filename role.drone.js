@@ -11,7 +11,7 @@ var roleDrone = {
 	},
 	makeDrone: function(spawn){
 	    var cap = spawn.room.energyAvailable;
-	    var creepName="drone"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
+	    var creepName="drone@"+spawn.room.name+"@"+spawn.name+"@"+Game.time;
 	    console.log("Creating Creep ("+creepName+")");
 	    spawn.createCreep( makeBestBody(cap), creepName, { role: 'drone' } );
 	},

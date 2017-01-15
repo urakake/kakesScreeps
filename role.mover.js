@@ -11,7 +11,7 @@ var roleMover = {
 	},
 	makeMover: function(spawn) {
 	    var cap = spawn.room.energyAvailable;
-	    var creepName = "mover"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
+	    var creepName = "mover@"+spawn.room.name+"@"+spawn.name+"@"+Game.time;
 	    var missingBin = getMissingSourceBinId(spawn.room);
 	    if(missingBin==undefined){
 	        for (var i in spawn.room.memory.miningRooms){

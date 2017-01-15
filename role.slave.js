@@ -11,7 +11,7 @@ var roleSlave = {
 	}, 
 	makeSlave: function(spawn){
 	    var cap = spawn.room.energyAvailable;
-        var creepName="controllerSlave"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
+        var creepName="controllerSlave@"+spawn.room.name+"@"+spawn.name+"@"+Game.time;
         console.log("Creating Creep ("+creepName+")");
         return spawn.createCreep( makeBestBody(cap), creepName, { role: 'slave' } );
 	},

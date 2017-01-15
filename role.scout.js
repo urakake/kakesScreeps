@@ -12,7 +12,7 @@ var roleScout = {
 	},
 	makeScout: function(spawn){
 	    var cap = spawn.room.energyAvailable;
-	    var creepName="scout"+Game.time+"@"+spawn.room.name+"-"+spawn.room.memory.scoutRoom+"@"+spawn.name;
+	    var creepName="scout@"+spawn.room.name+"@"+spawn.name+"@"+Game.time;
 	    var missingRoom = getMissingScoutRoom(spawn.room);
 	    console.log("Creating Creep ("+creepName+")");
 	    if(missingRoom!=undefined){
@@ -37,6 +37,8 @@ function getMissingScoutRoom(myRoom){
                 thisRoom.memory.scoutName="";
                 nameOfRoom = thisRoom.name;
             }
+        } else {
+            nameOfRoom = myRoom.memory.miningRooms[i];
         }
     }
     return nameOfRoom;
@@ -73,6 +75,8 @@ function voyageOutOfRoom(creep,destRoom) {
 function becomeDrone(creep){
     creep.memory.role="drone";
     creep.memory.init=false;
+    var targetRoom = Game.rooms[creep.memory.targetRoom];
+	targetRoom.memory.scoutName=creep.name;
 }
 function makeBestBody(cap){
     var body = [];

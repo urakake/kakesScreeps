@@ -11,7 +11,7 @@ var roleMiner = {
     },
     makeMiner: function(spawn) {
         var cap = spawn.room.energyAvailable;
-        var creepName = "miner"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
+        var creepName = "miner@"+spawn.room.name+"@"+spawn.name+"@"+Game.time;
         var missingNode = getMissingMinerSourceId(spawn.room);
 	    if(missingNode==undefined){
 	        for (var i in spawn.room.memory.miningRooms){

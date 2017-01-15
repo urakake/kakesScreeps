@@ -11,7 +11,7 @@ var roleClaimer = {
 	},
 	makeClaimer: function(spawn){
 	    var cap = spawn.room.energyAvailable;
-	    var creepName="claimer"+Game.time+"@"+spawn.room.name+"@"+spawn.name;
+	    var creepName="claimer@"+spawn.room.name+"@"+spawn.name+"@"+Game.time;
 	    var missingRoom = getMissingClaimerRoom(spawn.room);
 	    console.log("Creating Creep ("+creepName+")");
 	    spawn.createCreep( makeBestBody(cap), creepName, { role: 'claimer', targetRoom: missingRoom  } );
