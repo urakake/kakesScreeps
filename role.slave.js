@@ -17,7 +17,7 @@ var roleSlave = {
 	},
 	checkSlaves: function(myRoom){
 	    var foundMissing=false;
-	    if(myRoom.memory.numSlaves<1){
+	    if(myRoom.memory.numSlaves<2){
 	        var targets = myRoom.find(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return (structure.structureType == STRUCTURE_STORAGE || structure.structureType == STRUCTURE_LINK || structure.structureType == STRUCTURE_CONTAINER)
