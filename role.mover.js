@@ -25,6 +25,7 @@ var roleMover = {
 	        return spawn.createCreep( makeBestBody(cap), creepName, { role: 'mover', sourceBin: missingBin } );
 	    } else {
 	        console.log("undefined src bin for mover")
+	        return spawn.createCreep( makeBestBody(cap), creepName, { role: 'mover', sourceBin: missingBin } );
 	    }
 	    
 	},
