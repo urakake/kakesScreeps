@@ -24,6 +24,9 @@ var roleScout = {
         if(getMissingScoutRoom(myRoom)!=undefined){
             foundMissing=true
         }
+        if(myRoom.memory.numScouts!=0){
+            foundMissing=false
+        }
         return foundMissing;
 	}
 };
@@ -120,7 +123,9 @@ function init(creep) {
     creep.memory.spawnRoom = creep.room.name;
 	if(creep.memory.targetRoom!=undefined){      // set array with your name
 	    var targetRoom = Game.rooms[creep.memory.targetRoom];
-	    targetRoom.memory.scoutName=creep.name;
+	    if(targetRoom){
+	        targetRoom.memory.scoutName=creep.name;
+	    }
 	} else {
 	    console.log("spawning scout with no target")
 	}

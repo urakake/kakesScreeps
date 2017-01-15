@@ -30,7 +30,11 @@ var roleMover = {
 	},
 	checkMovers: function(myRoom) {
     	var foundMissing=false;
-        if(getMissingSourceBinId(myRoom) != undefined){
+    	if(myRoom.memory.forceMoverNum!=undefined){
+    	    if(myRoom.memory.numMovers<myRoom.memory.forceMoverNum){
+    	        foundMissing=true;
+    	    }
+    	} else if(getMissingSourceBinId(myRoom) != undefined){
             foundMissing=true;
         }
         return foundMissing;
