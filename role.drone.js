@@ -216,6 +216,7 @@ function dumpEnergy(creep) {
     		});
         	if (targets.length>0) {                                                         //   3 building low?
         	    creep.memory.target=creep.pos.findClosestByRange(targets).id;
+        	    creep.memory.repairMax=2500;
         		creep.memory.state = "repair";
 			    creep.say('repair');
         	} else {
@@ -230,6 +231,7 @@ function dumpEnergy(creep) {
             		});
                 	if (targets.length>0) {                                                 //   5 building kina low?
                 	    creep.memory.target=creep.pos.findClosestByRange(targets).id;
+                	    creep.memory.repairMax=250000;
                 		creep.memory.state = "repair";
         			    creep.say('repair');
                 	} else {
@@ -291,7 +293,10 @@ function buildConstructionSite(creep){
 function repairDamagedStructure(creep){
     var target = Game.getObjectById(creep.memory.target);
     var validSource=false;
-    if(target!=undefined && (target.hits<target.hitsMax) && target.hits<250000){
+    if(creep.memory.repairMax==undefined){
+        creep.memory.repairMax=2500;
+    }
+    if(target!=undefined && (target.hits<target.hitsMax) && target.hits<creep.memory.repairMax){
        // console.log(creep.repair(target))
         if(creep.repair(target) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
