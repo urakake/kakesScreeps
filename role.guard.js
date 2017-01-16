@@ -61,7 +61,7 @@ function walkToRoom(creep) {
     var targetRoom=creep.memory.targetRoom;
     //console.log(targetRoom+"  "+creep.memory.scoutRoom)
     if(creep.room.name == targetRoom){
-        if(creep.pos.x<=48 && creep.pos.y<=48 && creep.pos.x>=1 && creep.pos.y>=1){
+        if(creep.pos.x<=45 && creep.pos.y<=45 && creep.pos.x>=5 && creep.pos.y>=5){
             creep.memory.state="standGuard";
         } else {
             creep.moveTo(creep.room.controller);
@@ -72,12 +72,17 @@ function walkToRoom(creep) {
     }
 }
 function standGuard(creep) {
-    var targets = creep.room.find(FIND_HOSTILE_CREEPS);
-    if(targets.length>0){
-       creep.memory.state="attackInvader"
-    } else {
-       
-    }
+	var targets = creep.room.find(FIND_HOSTILE_CREEPS);
+	if (targets.length > 0) {
+		creep.memory.state = "attackInvader"
+	} else {
+	    //guard will move to flag named "Rallyxxxx" where xxxx is the room's name
+		var flagName = 'Rally' + creep.room.name;
+		if (Game.flags[flagName]!=undefined && (creep.pos.x != Game.flags[flagName].pos.x || creep.pos.y != Game.flags[flagName].pos.y)) {
+			creep.say('rally')
+			creep.moveTo(Game.flags[flagName].pos)
+		}
+	}
 }
 function attackInvaderScum(creep) {
    var targets = creep.room.find(FIND_HOSTILE_CREEPS);
