@@ -138,7 +138,7 @@ function pickupEnergy(creep) {
         	creep.moveByPath(creep.memory.path)
         	validSource=true;
         } else {
-
+            
         }
     }
     if(creep.carry.energy==creep.carryCapacity){
@@ -213,39 +213,39 @@ function dumpEnergy(creep) {
         creep.say('upgrade');
     } 
     if (creep.memory.state=="dump") {
-        var targets = creep.room.find(FIND_STRUCTURES, {
-                filter: (structure) => {
-                     return ((structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) && (structure.energy < structure.energyCapacity) ||
-                        (structure.structureType == STRUCTURE_TOWER) && (structure.energy < structure.energyCapacity*.8))
-                }
-        });
-        if(targets.length>0) {                                                              //  2 extenstion filled?
-                target = creep.pos.findClosestByRange(targets)
-                creep.memory.target=target.id;
-                creep.memory.path = creep.pos.findPathTo(target);
-    			creep.memory.state = "store";
-    			creep.say('store');
+	    var targets = creep.room.find(FIND_STRUCTURES, {
+			filter: (structure) => {   return ((structure.hits < structure.hitsMax) && (structure.hits < 2500))	}
+		});
+    	if (targets.length>0) {                                                         //   2 building low?
+    	    target = creep.pos.findClosestByRange(targets)
+            creep.memory.target=target.id;
+            creep.memory.path = creep.pos.findPathTo(target);
+    	    creep.memory.repairMax=2500;
+    		creep.memory.state = "repair";
+		    creep.say('repair');
     	} else {
-		    var targets = creep.room.find(FIND_STRUCTURES, {
-    			filter: (structure) => {   return ((structure.hits < structure.hitsMax) && (structure.hits < 2500))	}
-    		});
-        	if (targets.length>0) {                                                         //   3 building low?
-        	    target = creep.pos.findClosestByRange(targets)
+    	    var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+    		if(targets.length>0) {                                                      //  3 building sites?
+    		    target = creep.pos.findClosestByRange(targets)
                 creep.memory.target=target.id;
                 creep.memory.path = creep.pos.findPathTo(target);
-        	    creep.memory.repairMax=2500;
-        		creep.memory.state = "repair";
-			    creep.say('repair');
-        	} else {
-        	    var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-        		if(targets.length>0) {                                                      //  4 building sites?
-        		    target = creep.pos.findClosestByRange(targets)
-                    creep.memory.target=target.id;
-                    creep.memory.path = creep.pos.findPathTo(target);
-        			creep.memory.state = "build";
-        			creep.say('build');
-        		} else {
-        		    var targets = creep.room.find(FIND_STRUCTURES, {
+    			creep.memory.state = "build";
+    			creep.say('build');
+    		} else {
+    		    var targets = creep.room.find(FIND_STRUCTURES, {
+                        filter: (structure) => {
+                             return ((structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) && (structure.energy < structure.energyCapacity) ||
+                                (structure.structureType == STRUCTURE_TOWER) && (structure.energy < structure.energyCapacity*.8))
+                        }
+                });
+                if(targets.length>0) {                                                              //  4 extenstion filled?
+                        target = creep.pos.findClosestByRange(targets)
+                        creep.memory.target=target.id;
+                        creep.memory.path = creep.pos.findPathTo(target);
+            			creep.memory.state = "store";
+            			creep.say('store');
+            	} else {
+            	    var targets = creep.room.find(FIND_STRUCTURES, {
             			filter: (structure) => {   return ((structure.hits < structure.hitsMax) && (structure.hits < 250000))	}
             		});
                 	if (targets.length>0) {                                                 //   5 building kina low?
@@ -260,7 +260,7 @@ function dumpEnergy(creep) {
                 	    creep.memory.state = "upgrade";                                     //   6 dump into controller          
             	        creep.say('upgrade');
                 	}
-        		}
+            	}
     		}
     	}
     }
