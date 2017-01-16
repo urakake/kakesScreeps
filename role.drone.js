@@ -344,6 +344,7 @@ function dumpInController(creep) {
             }
         } else {
             creep.say("bored")
+            creep.memory.state = "dump";
         }
     }
     if(creep.carry.energy==0)    

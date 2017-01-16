@@ -28,7 +28,7 @@ function getMissingClaimerRoom(myRoom){
     var nameOfRoom=undefined;
     for(var i in myRoom.memory.miningRooms){
         var thisRoom = Game.rooms[myRoom.memory.miningRooms[i]];
-        if(thisRoom){
+        if(thisRoom && !thisRoom.controller.my){
             var thisCreep = Game.creeps[thisRoom.memory.claimerName];
             if(thisCreep==undefined){
                 thisRoom.memory.claimerName="";
