@@ -7,7 +7,12 @@ var roleDrone = {
         if(!creep.memory.init){
             init(creep);
         }
-        work(creep);
+        var target = Game.getObjectById(creep.memory.target);
+        if(target!=undefined && target.room!=creep.room){
+            voyageOutOfRoom(creep,target.room)
+        } else {
+            work(creep);
+        }
 	},
 	makeDrone: function(spawn){
 	    var cap = spawn.room.energyAvailable;
@@ -76,6 +81,7 @@ function acquireEnergy(creep) {
         target = creep.pos.findClosestByRange(targets);
     if(target!=undefined && target.amount>50){                   // found dropped energy
         creep.memory.target=target.id;
+        creep.memory.path = creep.pos.findPathTo(target);
         creep.memory.state = "pickup";
         creep.say("pickup");
     } else {
@@ -92,6 +98,7 @@ function acquireEnergy(creep) {
             target = creep.pos.findClosestByRange(targets);
         if(target!=undefined){    // found source bin
             creep.memory.target=target.id;
+            creep.memory.path = creep.pos.findPathTo(target);
             //console.log(target.id)
             creep.memory.state = "getFromBin";
             creep.say("fill");
@@ -105,6 +112,7 @@ function acquireEnergy(creep) {
                 target = creep.pos.findClosestByRange(targets);
             if(target!=undefined){                              // found source Node
                 creep.memory.target=target.id;
+                creep.memory.path = creep.pos.findPathTo(target);
                 creep.memory.state = "harvest";
                 creep.say("harvest");
             } else {
@@ -126,8 +134,11 @@ function pickupEnergy(creep) {
     var validSource=false;
     if(target!=undefined && target.amount>15){
         if(creep.pickup(target) == ERR_NOT_IN_RANGE){
-        	creep.moveTo(target);
+        	//creep.moveTo(target);
+        	creep.moveByPath(creep.memory.path)
         	validSource=true;
+        } else {
+
         }
     }
     if(creep.carry.energy==creep.carryCapacity){
@@ -147,7 +158,8 @@ function getFromBin(creep) {
     var validSource=false;
     if(target!=undefined && (target.structureType==STRUCTURE_CONTAINER || target.structureType==STRUCTURE_STORAGE || target.structureType==STRUCTURE_LINK ) && target.store[RESOURCE_ENERGY]!=0){
         if(target.transfer(creep,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE){
-        	creep.moveTo(target);
+        	//creep.moveTo(target);
+        	creep.moveByPath(creep.memory.path)
         	validSource=true;
         }
     }
@@ -196,6 +208,7 @@ function dumpEnergy(creep) {
     creep.memory.target=undefined;
     var target = undefined
     if (creep.room.controller.ticksToDowngrade<800){                                        //  1 contoller downgrade?
+        creep.memory.path = creep.pos.findPathTo(creep.room.controller);
         creep.memory.state = "upgrade";
         creep.say('upgrade');
     } 
@@ -207,7 +220,9 @@ function dumpEnergy(creep) {
                 }
         });
         if(targets.length>0) {                                                              //  2 extenstion filled?
-                creep.memory.target=creep.pos.findClosestByRange(targets).id;
+                target = creep.pos.findClosestByRange(targets)
+                creep.memory.target=target.id;
+                creep.memory.path = creep.pos.findPathTo(target);
     			creep.memory.state = "store";
     			creep.say('store');
     	} else {
@@ -215,14 +230,18 @@ function dumpEnergy(creep) {
     			filter: (structure) => {   return ((structure.hits < structure.hitsMax) && (structure.hits < 2500))	}
     		});
         	if (targets.length>0) {                                                         //   3 building low?
-        	    creep.memory.target=creep.pos.findClosestByRange(targets).id;
+        	    target = creep.pos.findClosestByRange(targets)
+                creep.memory.target=target.id;
+                creep.memory.path = creep.pos.findPathTo(target);
         	    creep.memory.repairMax=2500;
         		creep.memory.state = "repair";
 			    creep.say('repair');
         	} else {
         	    var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
         		if(targets.length>0) {                                                      //  4 building sites?
-        		    creep.memory.target=creep.pos.findClosestByRange(targets).id;
+        		    target = creep.pos.findClosestByRange(targets)
+                    creep.memory.target=target.id;
+                    creep.memory.path = creep.pos.findPathTo(target);
         			creep.memory.state = "build";
         			creep.say('build');
         		} else {
@@ -230,11 +249,14 @@ function dumpEnergy(creep) {
             			filter: (structure) => {   return ((structure.hits < structure.hitsMax) && (structure.hits < 250000))	}
             		});
                 	if (targets.length>0) {                                                 //   5 building kina low?
-                	    creep.memory.target=creep.pos.findClosestByRange(targets).id;
+                	    target = creep.pos.findClosestByRange(targets)
+                        creep.memory.target=target.id;
+                        creep.memory.path = creep.pos.findPathTo(target);
                 	    creep.memory.repairMax=250000;
                 		creep.memory.state = "repair";
         			    creep.say('repair');
                 	} else {
+                	    creep.memory.path = creep.pos.findPathTo(creep.room.controller);
                 	    creep.memory.state = "upgrade";                                     //   6 dump into controller          
             	        creep.say('upgrade');
                 	}
@@ -251,7 +273,8 @@ function storeForSpawn(creep) {
     var validSource=false;
     if(target!=undefined){
         if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
+            //creep.moveTo(target);
+            creep.moveByPath(creep.memory.path)
             validSource=true;
         }
     }
@@ -272,7 +295,8 @@ function buildConstructionSite(creep){
     var validSource=false;
     if(target!=undefined && target!=null && target.progress!=target.progressTotal){
         if(creep.build(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
+            creep.moveByPath(creep.memory.path)
+            //creep.moveTo(target);
             validSource=true;
         } else {
             validSource=true;
@@ -299,7 +323,8 @@ function repairDamagedStructure(creep){
     if(target!=undefined && (target.hits<target.hitsMax) && target.hits<creep.memory.repairMax){
        // console.log(creep.repair(target))
         if(creep.repair(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
+            creep.moveByPath(creep.memory.path)
+            //creep.moveTo(target);
             validSource=true;
         } else {
             validSource=true;
@@ -320,7 +345,8 @@ function repairDamagedStructure(creep){
 function dumpInController(creep) {
     if(creep.room.controller.my){
         if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(creep.room.controller);
+            creep.moveByPath(creep.memory.path)
+            //creep.moveTo(creep.room.controller);
         }
     } else {
         //console.log(creep.body.indexOf(CLAIM))
@@ -368,6 +394,11 @@ function containerEmpty(structure){
         }
     } 
     return empty;
+}
+function voyageOutOfRoom(creep,destRoom) {
+    var exitDir = Game.map.findExit(creep.room.name, destRoom);
+    var Exit = creep.pos.findClosestByPath(exitDir);
+    creep.moveTo(Exit);
 }
 function makeBestBody(cap){
     var body = [];
