@@ -135,8 +135,8 @@ function pickupEnergy(creep) {
     if(target!=undefined && target.amount>15){
         if(creep.pickup(target) == ERR_NOT_IN_RANGE){
         	//creep.moveTo(target);
-        	creep.moveByPath(creep.memory.path)
-        	validSource=true;
+        	if(creep.moveByPath(creep.memory.path)!=ERR_NOT_FOUND)
+        	    validSource=true;
         } else {
             
         }
@@ -159,8 +159,8 @@ function getFromBin(creep) {
     if(target!=undefined && (target.structureType==STRUCTURE_CONTAINER || target.structureType==STRUCTURE_STORAGE || target.structureType==STRUCTURE_LINK ) && target.store[RESOURCE_ENERGY]!=0){
         if(target.transfer(creep,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE){
         	//creep.moveTo(target);
-        	creep.moveByPath(creep.memory.path)
-        	validSource=true;
+        	if(creep.moveByPath(creep.memory.path)!=ERR_NOT_FOUND)
+        	    validSource=true;
         }
     }
     if(creep.carry.energy==creep.carryCapacity){
@@ -180,16 +180,8 @@ function harvestNode(creep) {
     var validSource=false;
     if(target!=undefined && target.energy>0){
         if(creep.harvest(target) == ERR_NOT_IN_RANGE){
-        	if(creep.moveTo(target) == ERR_NO_PATH){
-        	    for(var i in creep.room.memory.sourceIds){
-        	        if(target.id != creep.room.memory.sourceIds[i]){
-        	            creep.memory.target=creep.room.memory.sourceIds[i]
-        	        }
-        	    }
-        	}
-        	validSource=true;
-        } else {
-            validSource=true;
+        	if(creep.moveByPath(creep.memory.path)!=ERR_NOT_FOUND)
+        	    validSource=true;
         }
     }
     if(creep.carry.energy==creep.carryCapacity){
@@ -274,8 +266,8 @@ function storeForSpawn(creep) {
     if(target!=undefined){
         if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             //creep.moveTo(target);
-            creep.moveByPath(creep.memory.path)
-            validSource=true;
+            if(creep.moveByPath(creep.memory.path)!=ERR_NOT_FOUND)
+        	    validSource=true;
         }
     }
     if(creep.carry.energy==0){
@@ -295,11 +287,8 @@ function buildConstructionSite(creep){
     var validSource=false;
     if(target!=undefined && target!=null && target.progress!=target.progressTotal){
         if(creep.build(target) == ERR_NOT_IN_RANGE) {
-            creep.moveByPath(creep.memory.path)
-            //creep.moveTo(target);
-            validSource=true;
-        } else {
-            validSource=true;
+            if(creep.moveByPath(creep.memory.path)!=ERR_NOT_FOUND)
+        	    validSource=true;
         }
     }
     if(creep.carry.energy==0){
@@ -323,11 +312,8 @@ function repairDamagedStructure(creep){
     if(target!=undefined && (target.hits<target.hitsMax) && target.hits<creep.memory.repairMax){
        // console.log(creep.repair(target))
         if(creep.repair(target) == ERR_NOT_IN_RANGE) {
-            creep.moveByPath(creep.memory.path)
-            //creep.moveTo(target);
-            validSource=true;
-        } else {
-            validSource=true;
+            if(creep.moveByPath(creep.memory.path)!=ERR_NOT_FOUND)
+        	    validSource=true;
         }
     }
     if(creep.carry.energy==0){
