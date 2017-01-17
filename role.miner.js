@@ -74,11 +74,17 @@ function moveToNode(creep){
     if(targetSource!=undefined){
         if(creep.room.name == targetSource.room.name){
             if(creep.pos.x<=48 && creep.pos.y<=48 && creep.pos.x>=1 && creep.pos.y>=1){
-                if(creep.harvest(targetSource) == ERR_NOT_IN_RANGE){
-    			    creep.moveTo(targetSource);
-    		    } else { 
-    		        creep.memory.state = "find";
-    		        creep.say('find')
+                //guard will move to flag named "Rallyxxxx" where xxxx is the room's name
+        		var flagName = '' + creep.memory.assignedNode;
+        		if (Game.flags[flagName]!=undefined && (creep.pos.x != Game.flags[flagName].pos.x || creep.pos.y != Game.flags[flagName].pos.y)) {
+        			creep.moveTo(Game.flags[flagName].pos)
+        		} else {
+        		    if(creep.harvest(targetSource) == ERR_NOT_IN_RANGE){
+        			    creep.moveTo(targetSource);
+        		    } else { 
+    		            creep.memory.state = "find";
+    		            creep.say('find')
+        		    }
                 }
             } else {
                 creep.moveTo(targetSource.room.controller);

@@ -105,8 +105,7 @@ function initRoom(myRoom) {
 	myRoom.memory.sourceIds = sourceIds;
 	myRoom.memory.minerNames = minerNames;
 	clearCounts(myRoom);
-	checkRoom(myRoom)
-	0
+
 }
 module.exports = roleRoom;
 //------------------------------------------------------ role.room -----------------------------------------------------
